@@ -23,7 +23,7 @@
 
 <p>Yuuki is a python package for building an OpenC2 proxy.  Yuuki utilizes multiple dispatch on type and supports updating of actuators without interrupting the operations of the orchestrator or other actuators.  Yuuki is compatible with python version 2.7</p>
 
-<p>The initial codebase for the openc2-yuuki reposaitory is imported from the OpenC2 Forum's Github repository.</p>
+<p>The initial codebase for the openc2-yuuki repository is imported from the OpenC2 Forum's Github repository.</p>
 
 
 </div>
