@@ -31,7 +31,7 @@ Download and install yuuki
 
 Start a proxy:
 
-    python -m yuuki.proxy simple_profile.py
+    python -m yuuki.proxy --profiles openc2-yuuki/examples/simple_profile.py
 
 Start a debug shell:
 
