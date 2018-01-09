@@ -24,7 +24,7 @@ Create and activate a python virtual environment:
 
 Download and install yuuki
     
-    $ git clone https://github.com/OpenC2-org/openc2-yuuki.git
+    $ git clone https://github.com/oasis-open/openc2-yuuki.git
     $ pip install ./openc2-yuuki
 
 ## Usage
