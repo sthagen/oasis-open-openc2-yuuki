@@ -4,6 +4,8 @@
 <div>
 <h2><a id="readme-general">OASIS TC Open Repository: openc2-yuuki</a></h2>
 
+<p><b>This repository contains code developed against an earlier version of the OpenC2 language than that presented by OASIS for public review in October / November 2018 and is NOT CONSISTENT WITH THE VERSION UNDERGOING PUBLIC REVIEW. Any implementer of OpenC2 using this code should be aware that it will require updating to align with the current OpenC2 Language Specification.</b></p>
+
 <p>This GitHub public repository ( <b><a href="https://github.com/oasis-open/openc2-yuuki">https://github.com/oasis-open/openc2-yuuki</a></b> ) was created at the request of the <a href="https://www.oasis-open.org/committees/openc2/">OASIS Open Command and Control (OpenC2) TC</a> as an <a href="https://www.oasis-open.org/resources/open-repositories/">OASIS TC Open Repository</a> to support development of open source resources related to Technical Committee work.</p>
 
 <p>While this TC Open Repository remains associated with the sponsor TC, its development priorities, leadership, intellectual property terms, participation rules, and other matters of governance are <a href="https://github.com/oasis-open/openc2-yuuki/blob/master/CONTRIBUTING.md#governance-distinct-from-oasis-tc-process">separate and distinct</a> from the OASIS TC Process and related policies.</p>
