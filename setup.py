@@ -9,6 +9,6 @@ setup(name='yuuki',
       install_requires=[
           "requests >= 2.11.1",
           "PyYAML >= 3.11",
-          "Flask == 0.12.3"])
+          "Flask >= 0.12.3"])
 
 
