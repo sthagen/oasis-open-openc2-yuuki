@@ -6,22 +6,20 @@ from ..common.util import (
 )
 
 
-def convert_raw_cmd(cmd : dict) -> OC2Cmd:
-    """Validate then convert a received command; raise ValueError as needed.
+def convert_raw_cmd(cmd: dict) -> OC2Cmd:
     """
-
+    Validate then convert a received command; raise ValueError as needed.
+    """
     if not isinstance(cmd, dict):
         raise OC2Exception('Received cmd is not a dict')
     
     FieldSchema = namedtuple('FieldSchema', 'name type required validators')
 
-    action     = FieldSchema('action',     str,  True,  ( lambda x: _is_word(x)                 ,))
-    target     = FieldSchema('target',     dict, True,  ( lambda x: len(x) == 1                 , 
-                                                          lambda x: _is_word(list(x.keys())[0])  ))
-    args       = FieldSchema('args',       dict, False, ( lambda x: len(x) >= 1                 ,
-                                                          lambda x: _good_args(x)                ))
-    actuator   = FieldSchema('actuator',   dict, False, ( lambda x: len(x) >= 1                 ,))
-    command_id = FieldSchema('command_id', str,  False, ( lambda x: _is_word(x)                 ,))
+    action = FieldSchema('action', str,  True, (lambda x: _is_word(x), ))
+    target = FieldSchema('target', dict, True, (lambda x: len(x) == 1, lambda x: _is_word(list(x.keys())[0])))
+    args = FieldSchema('args', dict, False, (lambda x: len(x) >= 1, lambda x: _good_args(x)))
+    actuator = FieldSchema('actuator', dict, False, (lambda x: len(x) >= 1, ))
+    command_id = FieldSchema('command_id', str,  False, (lambda x: _is_word(x), ))
 
     allowed = [action, target, args, actuator, command_id]
 
@@ -39,12 +37,8 @@ def convert_raw_cmd(cmd : dict) -> OC2Cmd:
             for validator in schema.validators:
                 if not validator(value):
                     raise OC2Exception(f'Command {schema.name} field failed a validator')
-    
-    oc2cmd = OC2Cmd(cmd.get('action'),
-                    cmd.get('target'),
-                    cmd.get('args'),
-                    cmd.get('actuator'),
-                    cmd.get('command_id')) 
+
+    oc2cmd = OC2Cmd(*[cmd.get(f) for f in OC2Cmd._fields])
 
     nsids = _get_any_nsids(oc2cmd)
     if len(nsids) > 1:
@@ -53,15 +47,14 @@ def convert_raw_cmd(cmd : dict) -> OC2Cmd:
     return oc2cmd
 
 
-def _is_word(a_str : str) -> bool:
+def _is_word(a_str: str) -> bool:
     return bool(re.match(r'\S', a_str))
 
 
-def _good_args(value : dict) -> bool:
+def _good_args(value: dict) -> bool:
     """
     Non-restrictive; checks for default args, but allows more.
     """
-
     if not isinstance(value, dict):
         return False
     
@@ -89,7 +82,7 @@ def _good_args(value : dict) -> bool:
     return True
 
 
-def _get_any_nsids(cmd : OC2Cmd) -> list:
+def _get_any_nsids(cmd: OC2Cmd) -> list:
     target_field, = cmd.target.keys()
 
     target_field_nsid = None
@@ -114,6 +107,6 @@ def _get_any_nsids(cmd : OC2Cmd) -> list:
     all_nsids = {target_field_nsid, actuator_field_nsid, *args_field_nsids}
 
     # Might have a leftover None from initializing above.
-    all_nsids = all_nsids.difference({None})
+    all_nsids = all_nsids.difference({None, })
     
-    return all_nsids
+    return list(all_nsids)

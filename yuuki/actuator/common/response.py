@@ -1,15 +1,15 @@
-from enum import Enum, auto
+from enum import Enum
 
 
 class ResponseCode(Enum):
-    PROCESSING          = 102
-    OK                  = 200
-    BAD_REQUEST         = 400
-    UNAUTHORIZED        = 401
-    FORBIDDEN           = 403
-    NOT_FOUND           = 404
-    INTERNAL_ERROR      = 500
-    NOT_IMPLEMENTED     = 501
+    PROCESSING = 102
+    OK = 200
+    BAD_REQUEST = 400
+    UNAUTHORIZED = 401
+    FORBIDDEN = 403
+    NOT_FOUND = 404
+    INTERNAL_ERROR = 500
+    NOT_IMPLEMENTED = 501
     SERVICE_UNAVAILABLE = 503
     
     def text(self):
@@ -27,22 +27,20 @@ class ResponseCode(Enum):
         return mapping[self.value]
 
 
-class Response():
-    def __init__(self, status = ResponseCode.NOT_IMPLEMENTED,
-                       status_text = None,
-                       results     = None,
-                       ack = False):
-        
-        self.status      = status
+class Response:
+    def __init__(self, status: ResponseCode = ResponseCode.NOT_IMPLEMENTED, status_text: str = None, results: dict = None, ack: bool = False):
+        self.status = status
         self.status_text = status_text
-        self.results     = results
-        self.ack         = ack
+        self.results = results
+        self.ack = ack
 
     def __repr__(self):
         return self.as_dict().__repr__()
 
     def as_dict(self):
-        retval = {'status' : self.status.value}
+        retval = {
+            'status': self.status.value
+        }
         
         if self.ack:
             return retval

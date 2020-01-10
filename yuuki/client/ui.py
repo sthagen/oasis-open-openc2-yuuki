@@ -2,13 +2,15 @@ import argparse
 import json
 import re
 import textwrap
+
 from ..config import Config
-from . import data
-from . import network
+from . import (
+    data,
+    network
+)
 
 
-class UI():
-
+class UI:
     def __init__(self):
         c = Config.Console
 
@@ -75,7 +77,6 @@ class UI():
         )
         show_cmd.set_defaults(func=self.cmd_show)
         show_cmd.add_argument("command_index", nargs="*", help="Which command in example_openc2_commands.json")
-
 
     def parse_args(self, args: list = None) -> argparse.Namespace:
         if args:

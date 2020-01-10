@@ -9,7 +9,7 @@ from .dispatch import Dispatcher
 
 
 app = Flask(__name__)
-app.dispatcher = None
+app.dispatcher = Dispatcher()
 
 
 @app.errorhandler(400)
@@ -39,7 +39,7 @@ def ok():
 @app.route('/', methods=['POST'])
 def recieve():
     """
-    Recieve an OpenC2 command, process and return response.
+    Receive an OpenC2 command, process and return response.
 
     All OpenC2 commands should be application/json over HTTP POST.
     """
@@ -52,9 +52,8 @@ def recieve():
     return retval
 
 
-def run(host, port):
+def run(host, port, **kwargs):
     """
     """
-    app.dispatcher = Dispatcher()
-    app.run(port=port, host=host)
+    app.run(port=port, host=host, **kwargs)
 

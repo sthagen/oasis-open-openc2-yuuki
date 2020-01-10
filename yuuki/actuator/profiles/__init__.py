@@ -6,13 +6,13 @@ from ..common.response import Response, ResponseCode
 ACTIVE_PROFILES = ['profile_acme_anti_roadrunner']
 
 
-NSIDS      = []
-PAIRS      = {}
-VERSIONS   = []
-RATE_LIMIT = 30 # Magic!
+NSIDS = []
+PAIRS = {}
+VERSIONS = []
+RATE_LIMIT = 30  # Magic!
 
 
-class _ProfileModule():
+class _ProfileModule:
     def __init__(self, file_name):
         self.NSID = None
         self.file_name = file_name
@@ -24,13 +24,13 @@ class _ProfileModule():
 for profile_name in ACTIVE_PROFILES:
     profile_module = _ProfileModule(profile_name)
 
-    profile_module.module = import_module('.' + profile_name, package='yuuki.actuator_src.profiles')
+    profile_module.module = import_module('.' + profile_name, package='yuuki.actuator.profiles')
     
     profile_registry = getattr(profile_module.module,'profile_registry')
     
-    profile_module.NSID        = profile_registry['NSID']
-    profile_module.PAIRS       = profile_registry['PAIRS'].copy()
-    profile_module.VERSIONS    = profile_registry['VERSIONS'].copy()
+    profile_module.NSID = profile_registry['NSID']
+    profile_module.PAIRS = profile_registry['PAIRS'].copy()
+    profile_module.VERSIONS = profile_registry['VERSIONS'].copy()
    
     if profile_module.NSID in NSIDS:
         raise ValueError('Duplicate profile')
@@ -49,22 +49,26 @@ for profile_name in ACTIVE_PROFILES:
                              f'must all support the same version(s).')
 
 
-def _handle_query_features(cmd : OC2Cmd):
-    results = {'versions'   : VERSIONS,
-               'profiles'   : NSIDS,
-               'rate_limit' : RATE_LIMIT,
-               'pairs'      : sorted(
-                                 sorted(list(PAIRS.keys()),
-                                        key=lambda x: x[1]),
-                                 key=lambda x: x[0])}
+def _handle_query_features(cmd: OC2Cmd):
+    results = {
+        'versions': VERSIONS,
+        'profiles': NSIDS,
+        'rate_limit': RATE_LIMIT,
+        'pairs': sorted(
+            sorted(
+                list(PAIRS.keys()),
+                key=lambda x: x[1]),
+            key=lambda x: x[0]
+        )
+    }
     
     return Response(status=ResponseCode.OK, results=results)
 
 
 def do_it(pair, cmd):
-    """Interface to use by external calls.
     """
-
+    Interface to use by external calls.
+    """
     # We handle 'query features' here, instead of in an profile module,
     # because a profile module only knows about itself.
     if pair == ('query', 'features'):

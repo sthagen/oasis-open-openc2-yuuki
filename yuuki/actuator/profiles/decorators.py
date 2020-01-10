@@ -1,15 +1,18 @@
 from ..common.util import Pair
 
 
-class _Target():
-    """Store a real function to be called later, with its target name.
+class _Target:
+    """
+    Store a real function to be called later, with its target name.
     """
     def __init__(self, name, function):
         self.name = name
         self.function = function
 
-class _Action():
-    """Contain all the functions of the same name in a profile, e.g.'deny'.
+
+class _Action:
+    """
+    Contain all the functions of the same name in a profile, e.g.'deny'.
 
     For example, could contain the two functions for 'deny mac_addr' and 
     'deny domain_name'. When an instance of this class is called, it will
@@ -36,7 +39,8 @@ class _Action():
 
 
 def target(target_name):
-    """ Decorator - Very similiar to functools.singledispatch.
+    """
+    Decorator - Very similar to functools.singledispatch.
 
     But instead of dispatching on a TYPE of argument, we dispatch
     on the VALUE of an argument attribute (cmd.target, e.g. 'domain_name').
@@ -50,7 +54,7 @@ def target(target_name):
         """
         action_name = action_function.__name__
         
-        action_obj  = action_function.__globals__.get(action_name)
+        action_obj = action_function.__globals__.get(action_name)
 
         if action_obj is None:
             action_obj = _Action(action_name)
