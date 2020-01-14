@@ -1,6 +1,7 @@
 import argparse
 import json
 import re
+import sys
 import textwrap
 
 from ..config import Config
@@ -200,5 +201,9 @@ class UI:
 
 
 def run():
+    # Disable warning from requests module about certificate verification.
+    if not sys.warnoptions:
+        import warnings
+        warnings.simplefilter("ignore")
     ui = UI()
     ui.run()

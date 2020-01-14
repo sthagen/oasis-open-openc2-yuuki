@@ -64,38 +64,6 @@ class UI:
         options, fluff = self.parser.parse_known_args()
         return options
 
-    def check_ssl(self, cert_path: str, key_path: str) -> Tuple[str, str]:
-        if not os.path.isfile(cert_path) or not os.path.isfile(key_path):
-            print("SSL files are not found!!")
-            rsp = (input(f"Generate self-signed certificates in `{cert_path}`? [Y/n]") or 'Y').lower()
-            if rsp == 'y':
-                # create a key pair
-                k = crypto.PKey()
-                k.generate_key(crypto.TYPE_RSA, 2048)
-
-                # create a self-signed cert
-                cert = crypto.X509()
-                cert.get_subject().C = "US"
-                cert.get_subject().O = "Yuuki"
-                cert.get_subject().OU = "Yuuki"
-                # cert.get_subject().CN = gethostname()
-                cert.set_serial_number(1000)
-                cert.gmtime_adj_notBefore(0)
-                cert.gmtime_adj_notAfter(10 * 365 * 24 * 60 * 60)
-                cert.set_issuer(cert.get_subject())
-                cert.set_pubkey(k)
-                cert.sign(k, 'sha256')
-
-                pathlib.Path(os.path.dirname(cert_path)).mkdir(parents=True, exist_ok=True)
-                open(cert_path, "wb").write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
-
-                pathlib.Path(os.path.dirname(key_path)).mkdir(parents=True, exist_ok=True)
-                open(key_path, "wb").write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k))
-                return cert_path, key_path
-
-            print("Cannot start HTTPS without SSL certificates, Good Bye")
-            exit(1)
-
     def run(self):
         """
         """
@@ -109,7 +77,7 @@ class UI:
         ssl = {}
 
         if endpoint.scheme.lower() == "https":
-            ssl['ssl_context'] = self.check_ssl(opts.cert, opts.key)
+            ssl['ssl_context'] = 'adhoc'
         
         proxy.run(host=endpoint.hostname, port=endpoint.port, **ssl)
 
