@@ -1,6 +1,6 @@
 from .validate import convert_raw_cmd
 from .. import profiles
-from ..common.response import ResponseCode, Response
+from ..common.response import StatusCode, Response
 from ..common.util import OC2Cmd, Pair, OC2Exception
 
 
@@ -13,21 +13,21 @@ class Dispatcher:
         Well, response_requested=none is an outlier..
         """
         try:
-            cmd = convert_raw_cmd(raw_cmd)
+            oc2_cmd = convert_raw_cmd(raw_cmd)
         except OC2Exception as e:
             return Response(
-                status=ResponseCode.BAD_REQUEST,
+                status=StatusCode.BAD_REQUEST,
                 status_text=str(e)
             )
         except Exception as e:
             return Response(
-                status=ResponseCode.INTERNAL_ERROR,
+                status=StatusCode.INTERNAL_ERROR,
                 status_text=str(e)
             )
 
         # We a have a correctly formatted OC2Cmd now.
-        action  = cmd.action
-        target, = cmd.target.keys()
+        action  = oc2_cmd.action
+        target, = oc2_cmd.target.keys()
         pair = Pair(action, target)
         
         # 'ack' and 'status' in response_requested requires
@@ -35,29 +35,23 @@ class Dispatcher:
         # So we don't dispatch to a profile, and instead return
         # Not Implemented. 'none' requires more control over
         # our web-server that we don't have.
-        response_requested = self._get_response_requested(cmd)
+        response_requested = self._get_response_requested(oc2_cmd)
         if response_requested in ['none', 'ack', 'status']:
             return Response(
-                status=ResponseCode.NOT_IMPLEMENTED,
+                status=StatusCode.NOT_IMPLEMENTED,
                 status_text="Only response_requested = 'complete' is currently implemented."
             )
         
         # Same for any timing requests.
-        if self._is_timing_important(cmd):
+        if self._is_timing_important(oc2_cmd):
             return Response(
-                status=ResponseCode.NOT_IMPLEMENTED,
+                status=StatusCode.NOT_IMPLEMENTED,
                 status_text="'start_time', 'stop_time', and 'duration' are not currently implemented."
             )
 
-        try:
-            retval = profiles.do_it(pair, cmd)
-        except Exception as e:
-            return Response(
-                status=ResponseCode.NOT_FOUND,
-                status_text=str(e)
-            )
+        oc2_response = profiles.do_it(pair, oc2_cmd)
 
-        return retval
+        return oc2_response
     
     def _get_response_requested(self, cmd: OC2Cmd):
         if cmd.args is not None:

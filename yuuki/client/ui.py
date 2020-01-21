@@ -4,6 +4,11 @@ import re
 import sys
 import textwrap
 
+try:
+    from importlib import resources
+except ImportError:
+    import importlib_resources as resources
+
 from ..config import Config
 from . import (
     data,
@@ -14,15 +19,16 @@ from . import (
 class UI:
     def __init__(self):
         c = Config.Console
-
+        self.json_cmds = {}
         self.parser = argparse.ArgumentParser(
             usage="%(prog)s [options] <command> [sub-options]",
             add_help=False,
-            formatter_class=argparse.RawDescriptionHelpFormatter
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            prog='yuuki.producer'
         )
 
         self.parser.description = textwrap.dedent(f"""
-            {c.BOLD}Send OpenC2 commands to a local consumer ENDPOINT{c.END}
+            {c.BOLD}Send OpenC2 commands to a Consumer endpoint{c.END}
                 {c.DEFAULT}Defaults{c.END} are sourced from {c.BOLD}yuuki.conf{c.END}
 
             {c.BOLD}EXAMPLES:{c.END}
@@ -33,11 +39,11 @@ class UI:
                     > "target" : {{"domain_name" : "evil.com"}}
                     > }}
 
-                Send OpenC2 command #2 from the examples file:
-                    > {self.parser.prog} send 2
+                Send OpenC2 'query-features' command from the examples file:
+                    > {self.parser.prog} send query-features
 
-                Show OpenC2 command #2 from the examples file:
-                    > {self.parser.prog} show 2
+                Show all OpenC2 commands from the examples file:
+                    > {self.parser.prog} show
             """)
 
         # Common Args
@@ -64,20 +70,41 @@ class UI:
         # Send command
         send_cmd = subparsers.add_parser(
             "send",
-            help="Send a cmd from example_commands.json, based on index",
-            usage="send [send-options]"
+            help="Send a cmd from example_commands.json",
+            usage="send [cmd-name]"
         )
+        self.json_cmds = self._get_json_cmds()
+        send_cmd.add_argument('cmd_name', choices=[*self.json_cmds.keys()])
         send_cmd.set_defaults(func=self.cmd_send_from_file)
-        send_cmd.add_argument("command_index", nargs="*", help="Which command in example_openc2_commands.json")
 
         # Show command
         show_cmd = subparsers.add_parser(
             "show",
-            help="Display the cmds found in example_commands.json file",
+            help="Display the cmds found in example_openc2_commands.json file",
             usage="show [show-options]"
         )
         show_cmd.set_defaults(func=self.cmd_show)
-        show_cmd.add_argument("command_index", nargs="*", help="Which command in example_openc2_commands.json")
+
+    def _get_json_cmds(self):
+        stream = resources.open_text('yuuki.client.data', 'example_openc2_commands.json')
+        cmds_dict = json.load(stream)
+       
+        # While we're here, get some formatting info to use when displaying...
+        max_cmd_name_len = 1
+        max_action_len = 1
+        max_target_len = 1
+        
+        for cmd_name, cmd in cmds_dict.items():
+            max_cmd_name_len = max(len(cmd_name), max_cmd_name_len)
+            max_action_len = max(len("action" + str(cmd["action"])), max_action_len)
+            max_target_len = max(len("target" + str(cmd["target"])), max_target_len)
+        
+        # Pad with extra formatting characters e.g. "{ , etc
+        self.max_cmd_name_len = max_cmd_name_len + 2
+        self.max_action_len = max_action_len + 8
+        self.max_target_len = max_target_len + 6
+
+        return cmds_dict
 
     def parse_args(self, args: list = None) -> argparse.Namespace:
         if args:
@@ -110,7 +137,7 @@ class UI:
         print(self._color_cmd(visible_cmd))
         print()
 
-        response = network.send(endpoint, cmd) # Shouldn't we send a json obj, not a dict?
+        response = network.send(endpoint, cmd)
 
         print(f'<<< {c.RESPONSE}RESPONSE{c.END}')
         visible_response = json.dumps(response.json(), indent=3)
@@ -118,12 +145,12 @@ class UI:
         print()
 
     def cmd_send_from_file(self, opts: argparse.Namespace) -> None:
-        if not opts.command_index:
-            print('Supply a command index, e.g. 0')
+        if not opts.cmd_name:
+            print('Supply a command name from the json file, e.g. query-features')
             return None
         try:
-            cmd = data.get_cmd( int(opts.command_index[0]) )
-        except IndexError as e:
+            cmd = self.json_cmds[opts.cmd_name]
+        except Exception as e:
             print(e)
             return None
         self._send(opts.endpoint, cmd)
@@ -165,26 +192,24 @@ class UI:
         self._send(opts.endpoint, cmd)
 
     def cmd_show(self, opts: argparse.Namespace) -> None:
-        cmds = data.get_all_cmds()
         
-        def align_action_target(cmd):
-            prefix, suffix = cmd.split(',', maxsplit=1)
-            return '{0:<22}{1}'.format(prefix, suffix)
+        def align_action_target(cmd_name, cmd):
+            action, target, suffix = cmd.split(',', maxsplit=2)
+            cmd_len = self.max_cmd_name_len
+            act_len = self.max_action_len
+            tar_len = self.max_target_len
+            retval = '{0:<{cmd_len}}{1:<{act_len}}{2:<{tar_len}}{3}'.format(cmd_name, 
+                                                                            action + ',',
+                                                                            target + ',',
+                                                                            suffix, 
+                                                                            cmd_len=cmd_len,
+                                                                            act_len=act_len,
+                                                                            tar_len=tar_len)
+            
+            return retval
 
-        if opts.command_index:
-            # User has specified command(s) to show
-            for idx in opts.command_index:
-                try:
-                    cmd = data.get_cmd(int(idx))
-                except IndexError as e:
-                    print(e)
-                    continue
-                
-                print(idx, self._color_cmd(align_action_target(json.dumps(cmd))))
-        else:
-            # User wants to see all commands.
-            for i, cmd in enumerate(data.get_all_cmds()):
-                print(i, self._color_cmd(align_action_target(json.dumps(cmd))))
+        for cmd_name, cmd in self.json_cmds.items():
+            print(self._color_cmd(align_action_target(cmd_name,json.dumps(cmd))))
     
     def run(self) -> None:
         opts = self.parse_args()
@@ -192,10 +217,8 @@ class UI:
         # Check for basic sanity
         if not opts.cmd and opts.help:
             self.parser.print_help()
-
         elif not opts.cmd:
             self.parser.print_usage()
-
         else:
             opts.func(opts)
 

@@ -1,4 +1,4 @@
-from ..common.response import Response, ResponseCode
+from ..common.response import Response, StatusCode
 from ..common.util import OC2Cmd
 from .decorators import target
 
@@ -13,7 +13,7 @@ profile_registry = {
 @target('x-acme:road_runner')
 def locate(cmd: OC2Cmd):
     return Response(
-        status=ResponseCode.OK,
+        status=StatusCode.OK,
         status_text='Road Runner has been located!'
     )
 
@@ -21,7 +21,7 @@ def locate(cmd: OC2Cmd):
 @target('x-acme:road_runner')
 def detonate(cmd: OC2Cmd):
     return Response(
-        status=ResponseCode.INTERNAL_ERROR,
+        status=StatusCode.INTERNAL_ERROR,
         status_text='INTERNAL ERROR! Now targeting Coyote!!'
     )
 
@@ -29,15 +29,15 @@ def detonate(cmd: OC2Cmd):
 @target('properties')
 def set(cmd: OC2Cmd):
     return Response(
-        status=ResponseCode.OK,
-        status_text='Properties have been set.'
+        status=StatusCode.OK,
+        status_text='Properties have been set on x-acme.'
     )
 
 
 @target('device')
 def restart(cmd: OC2Cmd):
     return Response(
-        status=ResponseCode.OK,
+        status=StatusCode.OK,
         status_text='Device has been restarted'
     )
 
@@ -45,7 +45,7 @@ def restart(cmd: OC2Cmd):
 @target('device')
 def start(cmd: OC2Cmd):
     return Response(
-        status=ResponseCode.OK,
+        status=StatusCode.OK,
         status_text='Device is started'
     )
 
@@ -53,6 +53,6 @@ def start(cmd: OC2Cmd):
 @target('device')
 def stop(cmd: OC2Cmd):
     return Response(
-        status=ResponseCode.OK,
+        status=StatusCode.OK,
         status_text='Device has been stopped'
     )

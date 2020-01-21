@@ -1,7 +1,7 @@
 # openc2-yuuki
 
-Yuuki is compatible with Python 3. It is a reference implementation of an OpenC2 actuator, and comes with a simple client that will send commands to the actuator.
-As a demonstration, this actuator implements an imaginary OpenC2 Profile called "ACME Anti-RoadRunner", which might be sold to a famous Coyote.
+Yuuki is compatible with Python 3.7+. It is a reference implementation of an OpenC2 Consumer, and comes with a simple Producer that will send commands to the Consumer.
+As a demonstration, this consumer implements an imaginary OpenC2 Profile called "ACME Anti-RoadRunner", which might be sold to a famous Coyote.
 
 ## Installation
 
@@ -25,15 +25,15 @@ Download and install yuuki
 
 ## Start Actuator
 
-Start the actuator in the background with default settings, and silence its stdout, etc:
+Start the consumer in the background with default settings, and silence its stdout, etc. Note: Prefix the commands below with "python3.7 -m " if needed.
 
-    $ python3 -m yuuki.actuator > /dev/null 2>&1 &
+    $ yuuki.consumer > /dev/null 2>&1 &
 
-## Query the Actuator's Features
+## Query the Consumer's Features
 
-Now that we have the actuator running, let's see what it can do. To start, let's query its features. We can type this command out manually, but for now, let's just send a prewritten command that our client program comes with.
+Now that we have the consumer running, let's see what it can do. To start, let's query its features. We can type this command out manually, but for now, let's just send a prewritten command that our producer program comes with.
 
-    $ python3 -m yuuki.client send 0
+    $ yuuki.producer send query-reatures
 
 OUTPUT:
 
@@ -54,17 +54,17 @@ OUTPUT:
              'status': 200,
              'status_text': 'OK - the Command has succeeded.'}
 
-OK, we can see we sent an action-target pair of 'query features'. The response shows us everything we need to know about this actuator, and perhaps most importantly, which OpenC2 profile(s) it implements. Looks like it implements one profile with a NameSpace Identifer (NSID) of 'x-acme', and has six action-target 'pairs'. This means the actuator supports six specific commands; one for each pair.
+OK, we can see we sent an action-target pair of 'query features'. The response shows us everything we need to know about this consumer, and perhaps most importantly, which OpenC2 profile(s) it implements. Looks like it implements one profile with a NameSpace Identifer (NSID) of 'x-acme', and has six action-target 'pairs'. This means the consumer supports six specific commands; one for each pair. 
 
 ## Send a Command: Locate RoadRunner!
 
-From the list of action-target pairs above, we can see the actuator supports a command for locating the road runner. Let's do it. Again, we'll use a pre-written command from our client. To see what pre-written commands the client came with, just type
+From the list of action-target pairs above, we can see the consumer supports a command for locating the road runner. Let's do it. Again, we'll use a pre-written command from our producer. To see what pre-written commands the producer came with, just type
 
-    $ python3 -m yuuki.client show
+    $ yuuki.producer show
 
 Now let's actually locate the bird!
 
-    $ python3 -m yuuki.client send 5
+    $ yuuki.producer send locate-road_runner
 
 OUTPUT:
 
@@ -81,7 +81,7 @@ OUTPUT:
 
 Ok, we've found our target; let's act!
 
-    $ python3 -m yuuki.client send 6
+    $ yuuki.producer destroy-road_runner
 
     >>> COMMAND
             {'action': 'destroy',
@@ -94,9 +94,9 @@ Ok, we've found our target; let's act!
 
 ## Try Again
 
-Our previous command failed! Maybe we should hit the reset button on the actuator. We know that command exists becuase we saw it in the 'query features' response. This time we'll type in the command.
+Our previous command failed! Maybe we should hit the reset button on the consumer. We know that command exists becuase we saw it in the 'query features' response. This time we'll type in the command.
     
-    $ python3 -m yuuki.client type-it
+    $ yuuki.producer type-it
     $ {
     $ "action" : "reset",
     $ "target" : { "device" : ""}
@@ -114,7 +114,7 @@ Our previous command failed! Maybe we should hit the reset button on the actuato
 
 ## That's all, folks!
 
-Stop the actuator:
+Stop the consumer:
 
     $ fg
     $ CTRL-C
@@ -122,11 +122,11 @@ Stop the actuator:
 
 ## What just happened?
 
-The actuator started a server that waits for messages on 127.0.0.0:9001.
-The client sent a pre-written OpenC2 command from command_examples.json to the server.
-The server dispatched to any profile implementations it had loaded, if appropriate, then returned the response.
+The consumer started a server that waits for messages on 127.0.0.0:9001.
+The prodcuer sent a pre-written OpenC2 command from command_examples.json to the server.
+The server dispatched to the profile implementation it had loaded, if appropriate, then returned the response.
 
 
 
 ## Next Steps
-Look at 'profile_acme_anti_roadrunnery.py' in yuuki/actuator_src/profiles as a starting point to see what's happening.
+Look at 'profile_acme_anti_roadrunnery.py' in yuuki/consumer_src/profiles as a starting point to see what's happening.

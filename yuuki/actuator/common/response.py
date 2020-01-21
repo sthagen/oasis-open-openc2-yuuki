@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class ResponseCode(Enum):
+class StatusCode(Enum):
     PROCESSING = 102
     OK = 200
     BAD_REQUEST = 400
@@ -28,7 +28,7 @@ class ResponseCode(Enum):
 
 
 class Response:
-    def __init__(self, status: ResponseCode = ResponseCode.NOT_IMPLEMENTED, status_text: str = None, results: dict = None, ack: bool = False):
+    def __init__(self, status: StatusCode = StatusCode.NOT_IMPLEMENTED, status_text: str = None, results: dict = None, ack: bool = False):
         self.status = status
         self.status_text = status_text
         self.results = results

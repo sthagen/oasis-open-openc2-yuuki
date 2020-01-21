@@ -22,7 +22,7 @@ class UI:
         c = Config.Console
 
         desc = textwrap.dedent(f'''\
-        {c.BOLD}Start a proxy server to receive then dispatch OpenC2 Commands{c.END}
+        {c.BOLD}Start a Consumer process to receive then dispatch OpenC2 Commands{c.END}
             {c.DEFAULT}Defaults{c.END} are sourced from {c.BOLD}yuuki.conf{c.END}
             ''')
 
@@ -30,7 +30,8 @@ class UI:
             description=desc,
             usage='%(prog)s [--enpoint ENDPOINT]',
             add_help=False,
-            formatter_class=argparse.RawDescriptionHelpFormatter)
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            prog='yuuki.consumer')
         
         common_group = self.parser.add_argument_group(f'{c.BOLD}OPTIONS{c.END}')
 
@@ -39,18 +40,6 @@ class UI:
             '--endpoint',
             default=Config.defaults.endpoint,
             help=f'Server Socket ({c.DEFAULT}{Config.defaults.endpoint}{c.END})')
-
-        common_group.add_argument(
-            '-c',
-            '--cert',
-            default=os.path.join(os.getcwd(), 'certs', 'yuuki.cert'),
-            help='Path to SSL Certificate to use for HTTPS')
-
-        common_group.add_argument(
-            '-k',
-            '--key',
-            default=os.path.join(os.getcwd(), 'certs', 'yuuki.key'),
-            help='Path to SSL Key to use for HTTPS')
 
         common_group.add_argument(
             '-h',

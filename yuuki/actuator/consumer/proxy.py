@@ -37,7 +37,7 @@ def ok():
 
 
 @app.route('/', methods=['POST'])
-def recieve():
+def receive():
     """
     Receive an OpenC2 command, process and return response.
 
@@ -48,9 +48,7 @@ def recieve():
     data = request.get_json()
     oc2_response = app.dispatcher.dispatch(data)
     retval = json.dumps(oc2_response.as_dict())
-
     return retval
-
 
 def run(host, port, **kwargs):
     """
