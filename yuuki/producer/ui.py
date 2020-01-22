@@ -86,7 +86,7 @@ class UI:
         show_cmd.set_defaults(func=self.cmd_show)
 
     def _get_json_cmds(self):
-        stream = resources.open_text('yuuki.client.data', 'example_openc2_commands.json')
+        stream = resources.open_text('yuuki.producer.data', 'example_openc2_commands.json')
         cmds_dict = json.load(stream)
        
         # While we're here, get some formatting info to use when displaying...

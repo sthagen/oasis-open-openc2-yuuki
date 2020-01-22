@@ -29,7 +29,7 @@ for profile_name in ACTIVE_PROFILES:
     
     profile_module = _ProfileModule(profile_name)
 
-    profile_module.module = import_module('.' + profile_name, package='yuuki.actuator.profiles')
+    profile_module.module = import_module('.' + profile_name, package='yuuki.consumer.profiles')
     
     profile_registry = getattr(profile_module.module,'profile_registry')
     

@@ -34,7 +34,7 @@ _console = Namespace(
 
 class Config:
     """
-    Config shared by both client and actuator, populated by yuuki.conf.
+    Config shared by both producer and consumer, populated by yuuki.conf.
     """
     defaults = None
     Console = _console
