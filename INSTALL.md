@@ -33,7 +33,7 @@ Start the consumer in the background with default settings, and silence its stdo
 
 Now that we have the consumer running, let's see what it can do. To start, let's query its features. We can type this command out manually, but for now, let's just send a prewritten command that our producer program comes with.
 
-    $ yuuki.producer send query-reatures
+    $ yuuki.producer send query-features
 
 OUTPUT:
 
@@ -54,7 +54,7 @@ OUTPUT:
              'status': 200,
              'status_text': 'OK - the Command has succeeded.'}
 
-OK, we can see we sent an action-target pair of 'query features'. The response shows us everything we need to know about this consumer, and perhaps most importantly, which OpenC2 profile(s) it implements. Looks like it implements one profile with a NameSpace Identifer (NSID) of 'x-acme', and has six action-target 'pairs'. This means the consumer supports six specific commands; one for each pair. 
+OK, we can see we sent an action-target pair of 'query features'. The response shows us everything we need to know about this consumer, and perhaps most importantly, which OpenC2 profile(s) it implements. Looks like it implements one profile with a NameSpace Identifer (NSID) of 'x-acme', and has six action-target 'pairs'. This means the consumer supports six specific commands; one for each pair (though commands be refined with arguments and specifiers).
 
 ## Send a Command: Locate RoadRunner!
 
