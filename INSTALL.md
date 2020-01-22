@@ -23,7 +23,7 @@ Download and install yuuki
 
 
 
-## Start Actuator
+## Start Consumer
 
 Start the consumer in the background with default settings, and silence its stdout, etc. Note: Prefix the commands below with "python3.7 -m " if needed.
 
