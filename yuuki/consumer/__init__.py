@@ -1,5 +1,3 @@
-from .consumer.ui import run
+from .consumer import Consumer
 
-__all__ = [
-    'run'
-]
+__all__ = ['Consumer']
