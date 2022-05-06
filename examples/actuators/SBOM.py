@@ -14,7 +14,7 @@ SBOM = Actuator(nsid='sbom')
 
 @SBOM.pair('get', 'SBOM', implemented=False)
 def get_SBOM(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
-    sbom = open("example_sbom.json", "r")
+    sbom = open("SPDXJSONExample-v2.2.spdx.json", "r")
     result = print(sbom)
     sbom.close()
     if result:
