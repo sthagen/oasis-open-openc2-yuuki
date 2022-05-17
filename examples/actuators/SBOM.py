@@ -12,13 +12,13 @@ SBOM = Actuator(nsid='sbom')
     #These functions will be changed when there is knowledge of the Actions or Targets involved in SBOM
 
 
-@SBOM.pair('get', 'SBOM', implemented=False)
-def get_SBOM(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
+@SBOM.pair('query', 'SBOM', implemented=True)
+def query_SBOM(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
     sbom = open("SPDXJSONExample-v2.2.spdx.json", "r")
-    result = print(sbom)
+    bom = print(sbom)
     sbom.close()
-    if result:
-        return OpenC2RspFields(status=StatusCode.OK, status_text=result)
+    if bom:
+        return OpenC2RspFields(status=StatusCode.OK, status_text=bom)
     else:
         return OpenC2RspFields(status=StatusCode.NOT_FOUND, status_text="error performing SBOM retrieval")
 
