@@ -23,7 +23,9 @@ Common_Tables = ("arp_cache", "atom_packages", "azure_instance_metadata", "azure
                  "python_packages", "routes", "secureboot", "ssh_configs", "startup_items", "system_info", "time",
                  "uptime", "user_groups", "user_ssh_keys", "users", "ycloud_instance_metadata")
 
-
+NameOverride = {
+    "os": "OS"
+}
 
 config = ConfigParser()
 config.read('osquery_conf.conf')
@@ -31,35 +33,41 @@ v = config['path']
 os_query = Actuator(nsid='os_query')
 orm = OsQueryDatabase(f'{v}/.osquery/osqueryd.sock')
 orm.connect()
-t = ""
-f = []
-db = []
+
+
+def getTableName(_name: str):
+    fixed_name = []
+    for c in _name.split("_"):
+        fixed_name.append(NameOverride.get(c.lower(), c.capitalize()))
+    return "".join(fixed_name)
 
 
 @os_query.pair('query', 'database', implemented=True)
 def query_database(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
-    query_fields = {oc2_cmd.target.values()}
+    query_fields = oc2_cmd.target.get("database", {})
     if (db := query_fields.pop("database", None)) and db == "system":
+        result = ""
 
-            for k, v in query_fields():
-                if v in Common_Tables: t = v
-                elif v == "filters": f = v
-                else: return OpenC2RspFields("error performing db function, unknown aguments")
-                result = orm.tables._cross_platform.t.select()
-                if result.status.code != 0:
-                    return OpenC2RspFields("error performing osquery function")
-                else:
-                    r = list(result)
-                    return OpenC2RspFields(status=StatusCode.OK, status_text=r)
-    else: return OpenC2RspFields("error performing osquery function: table improperly specified.")
+        if t := query_fields.pop("table", None):
+            if t.lower() in Common_Tables:
+                model = getattr(orm.tables._cross_platform, getTableName(t), None)
+                if model is None:
+                    return OpenC2RspFields(status=StatusCode.BAD_REQUEST, status_text="table not found in DB")
+                qry = model
+            else:
+                return OpenC2RspFields(status=StatusCode.NOT_IMPLEMENTED, status_text="error performing db search, unexpected table")
+            if filters := query_fields.pop("filters", None):
+                fields = [getattr(model, f) for f in filters.get("fields", [])]
+                result = qry.select(*fields)
+                if result.status_code != 0:
+                    return OpenC2RspFields(status=StatusCode.NOT_FOUND, status_text="error performing osquery function")
 
+        else:
+            r = list(result)
+            return OpenC2RspFields(status=StatusCode.OK, status_text=r)
+    else: return OpenC2RspFields(status=StatusCode.NOT_IMPLEMENTED, status_text="error performing osquery function: target DB improperly specified.")
 
-
-
-
-
-
-
+#else: return OpenC2RspFields(status_text="error performing db function, unknown aguments")
 
 
 """
