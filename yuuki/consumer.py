@@ -138,11 +138,14 @@ class Consumer:
 
         :return: Serialized OpenC2 Response
         """
+
+        sender = str(getattr(OpenC2Msg, "actuator")+"@"+getattr(OpenC2CmdFields.args, "host"))
+
         if headers is None:
-            headers = OpenC2Headers(from_='yuuki')
+            headers = OpenC2Headers(from_=sender)
         else:
             headers = OpenC2Headers(request_id=headers.request_id,
-                                    from_='yuuki', to=headers.from_,
+                                    from_=sender, to=headers.from_,
                                     created=round(time() * 1000))
         message = OpenC2Msg(headers=headers, body=OpenC2Body(openc2=OpenC2Rsp(response=response_body)))
         response = message.dict(by_alias=True, exclude_unset=True, exclude_none=True)

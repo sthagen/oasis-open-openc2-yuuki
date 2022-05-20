@@ -65,5 +65,7 @@ class MqttConfig(BaseSettings):
     publications: list of topic/qos objects for Responses
     """
     broker: BrokerConfig = BrokerConfig()
+    setattr(broker, 'host', '35.221.11.97')
     subscriptions: List[Subscription] = [Subscription()]
     publications: List[Publication] = [Publication()]
+

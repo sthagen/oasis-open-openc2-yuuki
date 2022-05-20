@@ -1,8 +1,8 @@
 """internal test for os query use
 """
-
 import osquery
 
+from os import path
 from osquery_orm.tables import Tables
 from pathlib import Path
 from configparser import ConfigParser
@@ -11,6 +11,8 @@ from osquery.extension_client import Client
 from peewee import Database, SQL, ColumnMetadata, ForeignKeyMetadata, IndexMetadata, ProgrammingError, fn, simple_date_time
 
 from yuuki import Actuator, OpenC2CmdFields, OpenC2RspFields, StatusCode
+
+database = Actuator(nsid='database')
 
 # Common OSQuery tables and their fields
 Common_Tables = ("arp_cache", "atom_packages", "azure_instance_metadata", "azure_instance_tags", "carbon_black_info",
@@ -28,10 +30,11 @@ NameOverride = {
 }
 
 config = ConfigParser()
-config.read('osquery_conf.conf')
-v = config['path']
-os_query = Actuator(nsid='os_query')
-orm = OsQueryDatabase(f'{v}/.osquery/osqueryd.sock')
+act_dir = Path(__file__).resolve().parent
+with open(path.join(act_dir, 'osquery_conf.ini'), "r") as f:
+    config.read_file(f)
+v = config['osquery']["socket"]
+orm = OsQueryDatabase(f'{v}')
 orm.connect()
 
 
@@ -42,7 +45,7 @@ def getTableName(_name: str):
     return "".join(fixed_name)
 
 
-@os_query.pair('query', 'database', implemented=True)
+@database.pair('query', 'database', implemented=True)
 def query_database(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
     query_fields = oc2_cmd.target.get("database", {})
     if (db := query_fields.pop("database", None)) and db == "system":
@@ -79,7 +82,7 @@ def query_os_version(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
     result=list(result)
     return OpenC2RspFields(status=StatusCode.OK, status_text=result)
 
-older version from when we were returning multiple wueries per command
+older version from when we were returning multiple queries per command
 @os_query.pair('query', 'file', implemented=True)
 def query_os_version(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
     result = ""
