@@ -1,0 +1,11 @@
+SB-Utils@git+https://github.com/ScreamBun/SB_utils.git#subdirectory=root
+dxlclient
+elasticsearch
+flask
+osquery
+paho-mqtt
+pydantic
+requests
+python-nmap
+waitress
+werkzeug
