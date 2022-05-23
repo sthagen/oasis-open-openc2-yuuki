@@ -1,30 +1,41 @@
 """internal test for os query use
 """
-import osquery
-
 from os import path
-from osquery_orm.tables import Tables
 from pathlib import Path
 from configparser import ConfigParser
 from osquery_orm import OsQueryDatabase
-from osquery.extension_client import Client
-from peewee import Database, SQL, ColumnMetadata, ForeignKeyMetadata, IndexMetadata, ProgrammingError, fn, simple_date_time
+from peewee import ModelSelect
 
 from yuuki import Actuator, OpenC2CmdFields, OpenC2RspFields, StatusCode
 
 database = Actuator(nsid='database')
 
 # Common OSQuery tables and their fields
-Common_Tables = ("arp_cache", "atom_packages", "azure_instance_metadata", "azure_instance_tags", "carbon_black_info",
-                 "carves", "chrome_extension_content_scripts", "chrome_extensions", "cpuid", "curl", "curl_certificate",
-                 "ec2_instance_metadata", "ec2_instance_tags", "etc_hosts", "etc_protocols", "etc_services", "example",
-                 "file", "firefox_addons", "groups", "hash", "intel_me_info", "interface_addresses", "interface_details",
-                 "kernel_info", "listening_ports", "logged_in_users", "os_version", "osquery_events",
-                 "osquery_extensions", "osquery_flags", "osquery_info", "osquery_packs", "osquery_registry",
-                 "osquery_schedule", "platform_info", "process_memory_map", "process_open_sockets", "processes",
-                 "python_packages", "routes", "secureboot", "ssh_configs", "startup_items", "system_info", "time",
-                 "uptime", "user_groups", "user_ssh_keys", "users", "ycloud_instance_metadata")
-
+CommonTables = ("arp_cache", "atom_packages", "azure_instance_metadata", "azure_instance_tags", "carbon_black_info",
+                "carves", "chrome_extension_content_scripts", "chrome_extensions", "cpuid", "curl", "curl_certificate",
+                "ec2_instance_metadata", "ec2_instance_tags", "etc_hosts", "etc_protocols", "etc_services", "example",
+                "file", "firefox_addons", "groups", "hash", "intel_me_info", "interface_addresses", "interface_details",
+                "kernel_info", "listening_ports", "logged_in_users", "os_version", "osquery_events",
+                "osquery_extensions", "osquery_flags", "osquery_info", "osquery_packs", "osquery_registry",
+                "osquery_schedule", "platform_info", "process_memory_map", "process_open_sockets", "processes",
+                "python_packages", "routes", "secureboot", "ssh_configs", "startup_items", "system_info", "time",
+                "uptime", "user_groups", "user_ssh_keys", "users", "ycloud_instance_metadata")
+TableOverrides = {
+    # Common Tables
+    "ARPCache": "ARP_Cache",
+    "EC2InstanceMetadata": "EC2_InstanceMetadata",
+    "EC2InstanceTags": "EC2_InstanceTags",
+    "OSVersion": "OS_Version",
+    "SSHConfigs": "SSH_Configs",
+    # Linux Tables
+    "IPTables": "IP_Tables",
+    # Windows Tables
+    "CPUInfo": "CPU_Info",
+    "DNSCache": "DNS_Cache",
+    "IEExtensions": "IE_Extensions",
+    "NTFSACLPermissions": "NTFS_ACL_Permissions",
+    "NTFSJournalEvents": "NTFS_JournalEvents"
+}
 NameOverride = {
     "os": "OS"
 }
@@ -49,29 +60,33 @@ def getTableName(_name: str):
 def query_database(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
     query_fields = oc2_cmd.target.get("database", {})
     if (db := query_fields.pop("database", None)) and db == "system":
-        result = ""
 
         if t := query_fields.pop("table", None):
             print(t)
-            if t.lower() in Common_Tables:
-                model = getattr(orm.tables._cross_platform, getTableName(t), None)
+            if t.lower() in CommonTables:
+                name = getTableName(t)
+                model = getattr(orm.tables._cross_platform, TableOverrides.get(name, name), None)
                 if model is None:
                     return OpenC2RspFields(status=StatusCode.BAD_REQUEST, status_text="table not found in DB")
                 qry = model
             else:
                 return OpenC2RspFields(status=StatusCode.NOT_IMPLEMENTED, status_text="error performing db search, unexpected table")
+
+            print(f"TEST -  {qry}")
             if filters := query_fields.pop("filters", None):
                 fields = [getattr(model, f) for f in filters.get("fields", [])]
-                result = qry.select(*fields)
-                if result.status_code != 0:
-                    return OpenC2RspFields(status=StatusCode.NOT_FOUND, status_text="error performing osquery function")
+                qry = qry.select(*fields)
 
+            qry = qry if isinstance(qry, ModelSelect) else model.select()
+            if len(qry) > 0:
+                return OpenC2RspFields(status=StatusCode.OK, results={"database": {t: [r.dict() for r in qry]}})
+            return OpenC2RspFields(status=StatusCode.NOT_FOUND, status_text="error performing osquery function")
         else:
-            r = list(result)
-            return OpenC2RspFields(status=StatusCode.OK, status_text=r)
-    else: return OpenC2RspFields(status=StatusCode.NOT_IMPLEMENTED, status_text="error performing osquery function: target DB improperly specified.")
+            return OpenC2RspFields(status=StatusCode.BAD_REQUEST, status_text="error performing osquery function: no table given")
+    else:
+        return OpenC2RspFields(status=StatusCode.NOT_IMPLEMENTED, status_text="error performing osquery function: target DB improperly specified.")
 
-#else: return OpenC2RspFields(status_text="error performing db function, unknown aguments")
+# else: return OpenC2RspFields(status_text="error performing db function, unknown aguments")
 
 
 """
