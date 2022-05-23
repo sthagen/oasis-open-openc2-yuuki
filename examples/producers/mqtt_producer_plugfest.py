@@ -34,7 +34,7 @@ mqtt_client.subscribe(
 )
 mqtt_client.publish(
     topic="oc2/cmd",
-    payload=json.dumps(openc2_command.query_features),
+    payload=json.dumps(openc2_command.query_SBOM),
     qos=1,
     retain=False,
     properties=oc2_properties

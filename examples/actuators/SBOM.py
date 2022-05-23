@@ -3,10 +3,9 @@ https://github.com/oasis-tcs/openc2-ap-SBOM/blob/published/ap-SBOM-v1.0-wd01.htm
 Conformant to Conformance Clauses ?
 """
 
-from ipaddress import ip_network
 from yuuki import Actuator, OpenC2CmdFields, OpenC2RspFields, StatusCode
 
-SBOM = Actuator(nsid='sbom')
+SBOM = Actuator(nsid='SBOM')
 
 
     #These functions will be changed when there is knowledge of the Actions or Targets involved in SBOM
@@ -14,11 +13,12 @@ SBOM = Actuator(nsid='sbom')
 
 @SBOM.pair('query', 'SBOM', implemented=True)
 def query_SBOM(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
-    sbom = open("SPDXJSONExample-v2.2.spdx.json", "r")
+    sbom = open("examples/actuators/SPDXJSONExample-v2.2.spdx.json", "r")
+    print(f"opening SPDXJSONExample-v2.2.spdx.json")
     bom = list(sbom)
     sbom.close()
     if bom:
-        return OpenC2RspFields(status=StatusCode.OK, status_text=bom)
+        return OpenC2RspFields(status=StatusCode.OK, status_text=str(bom))
     else:
         return OpenC2RspFields(status=StatusCode.NOT_FOUND, status_text="error performing SBOM retrieval")
 

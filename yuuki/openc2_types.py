@@ -57,6 +57,7 @@ class OpenC2CmdArgs(BaseModel, extra=Extra.allow):
     duration: Optional[int]
     response_requested: Optional[Literal['none', 'ack', 'status', 'complete']]
 
+
     @root_validator
     def check_arg_length(cls, args):
         for value in args.values():
@@ -86,7 +87,7 @@ class OpenC2CmdFields(BaseModel, extra=Extra.forbid):
     action: str
     target: Dict[str, Any]
     args: Optional[OpenC2CmdArgs]
-    actuator: Optional[Dict[str, Dict[Any, Any]]]
+    actuator: Optional[Dict[str, Dict[str, Any]]]
     command_id: Optional[str]
 
     @validator('target', 'actuator')

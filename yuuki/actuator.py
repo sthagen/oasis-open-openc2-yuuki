@@ -41,6 +41,7 @@ class Actuator:
         """
         def decorator(function: OpenC2Function) -> OpenC2Function:
             self.register_pair(function, action, target, implemented)
+            print("Added "+action+" "+target)
             return function
         return decorator
 
@@ -54,8 +55,12 @@ class Actuator:
         :param implemented: Indicates whether the Command specified in the Actuator profile is supported or not
         """
         if implemented:
-            self.dispatch[action][target][self.nsid] = function
-            self.pairs[action].append(target)
+            # if action in self.pairs[action]:
+            #     self.dispatch[action][target][self.nsid] = function
+            #     self.pairs[action][target] = self.pairs[action][target]
+            # else:
+            self.dispatch.setdefault(action, defaultdict()).setdefault(target, {})[self.nsid] = function
+            self.pairs.setdefault(action, []).append(target)
         else:
             self.dispatch[action][target][self.nsid] = unimplemented_command
 

@@ -49,6 +49,7 @@ class Consumer:
         if actuators is not None:
             for actuator in actuators:
                 self.add_actuator_profile(actuator)
+                print("Added actuator "+actuator.nsid)
         self.executor = ThreadPoolExecutor()
         print(r'''
         _____.___.            __   .__ 
@@ -127,7 +128,7 @@ class Consumer:
             openc2_rsp = OpenC2RspFields(status=StatusCode.INTERNAL_ERROR, status_text='Serialization failed')
             return self.create_response_msg(openc2_rsp, headers=openc2_msg.headers, encode='json')
 
-    def create_response_msg(self, response_body: OpenC2RspFields, encode: str,
+    def create_response_msg(self, response_body: OpenC2RspFields,  encode: str,
                             headers: OpenC2Headers = None) -> Union[str, bytes]:
         """
         Creates and serializes an OpenC2 Response.
@@ -139,17 +140,25 @@ class Consumer:
         :return: Serialized OpenC2 Response
         """
 
-        sender = str(getattr(OpenC2Msg, "actuator")+"@"+getattr(OpenC2CmdFields.args, "host"))
+        print("creating response")
+        #if hasattr(OpenC2CmdFields, "actuator"):
+            #sender = str(OpenC2CmdFields.actuator+"@"+getattr(OpenC2CmdFields.args, "host"))
+        #else: sender = str("OC2LS@"+getattr(OpenC2CmdFields.args, "host"))
+
 
         if headers is None:
-            headers = OpenC2Headers(from_=sender)
+            print("no headers")
+            headers = OpenC2Headers(from_="Me, Dio")
+
         else:
+            print("found headers")
             headers = OpenC2Headers(request_id=headers.request_id,
-                                    from_=sender, to=headers.from_,
+                                    from_="Me, Dio", to=headers.from_,
                                     created=round(time() * 1000))
         message = OpenC2Msg(headers=headers, body=OpenC2Body(openc2=OpenC2Rsp(response=response_body)))
         response = message.dict(by_alias=True, exclude_unset=True, exclude_none=True)
         logging.info(f'Response:\n{pformat(response)}')
+        print("response on the way?")
         return self.serializations[encode].serialize(response)
 
     def _get_actuator_callable(self, oc2_msg: OpenC2Msg) -> Callable[[], OpenC2RspFields]:
@@ -161,7 +170,8 @@ class Consumer:
         """
 
         oc2_cmd = oc2_msg.body.openc2.request
-
+        print(oc2_cmd.action+" "+oc2_cmd.target_name)
+        print(self.dispatch)
         if oc2_cmd.action == 'query' and oc2_cmd.target_name == 'features':
             function = self.query_features
         elif oc2_cmd.action in self.dispatch and oc2_cmd.target_name in self.dispatch[oc2_cmd.action]:
@@ -184,7 +194,7 @@ class Consumer:
         """Implementation of the 'query features' Command as described in the OpenC2 Language Specification
         https://docs.oasis-open.org/openc2/oc2ls/v1.0/oc2ls-v1.0.html#41-implementation-of-query-features-command
         """
-
+        print("query features")
         if oc2_cmd.args is not None:
             if oc2_cmd.args.dict(exclude_unset=True).keys() != {'response_requested'}:
                 return OpenC2RspFields(status=StatusCode.BAD_REQUEST, status_text='Only arg response_requested allowed')

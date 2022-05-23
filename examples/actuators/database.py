@@ -52,6 +52,7 @@ def query_database(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
         result = ""
 
         if t := query_fields.pop("table", None):
+            print(t)
             if t.lower() in Common_Tables:
                 model = getattr(orm.tables._cross_platform, getTableName(t), None)
                 if model is None:

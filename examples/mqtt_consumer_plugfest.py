@@ -6,15 +6,15 @@ from yuuki.transports import (
 )
 
 from yuuki import Consumer
-from actuators.SBOM import SBOM
 from actuators.database import database
-from actuators.slpf import slpf
+#from actuators.slpf import slpf
+from actuators.SBOM import SBOM
 
-consumer = Consumer(rate_limit=60, versions=['1.0'], actuators=[slpf, SBOM, database])
+consumer = Consumer(rate_limit=60, versions=['1.0'], actuators=[SBOM, database]) #slpf here later
 
 host = '35.221.11.97'
 port = 1883
-topics = ['oc2/cmd', 'oc2/cmd/ap/slpf', 'oc2/cmd/ap/database', 'oc2/cmd/ap/sbom']
+topics = ['oc2/cmd', 'oc2/cmd/ap/slpf', 'oc2/cmd/ap/database', 'oc2/cmd/ap/SBOM']
 
 mqtt_config = MqttConfig(
     broker=BrokerConfig(
@@ -44,4 +44,5 @@ mqtt_config = MqttConfig(
 )
 
 mqtt_consumer = MqttTransport(consumer=consumer, config=mqtt_config)
+print("starting consumer")
 mqtt_consumer.start()

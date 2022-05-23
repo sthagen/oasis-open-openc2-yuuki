@@ -3,6 +3,7 @@ https://docs.oasis-open.org/openc2/transf-mqtt/v1.0/transf-mqtt-v1.0.html
 """
 
 import logging
+import re
 
 import paho.mqtt.client as mqtt
 from paho.mqtt.packettypes import PacketTypes
@@ -10,7 +11,7 @@ from paho.mqtt.properties import Properties
 
 from .config import MqttConfig
 from yuuki.consumer import Consumer
-from yuuki.openc2_types import StatusCode, OpenC2RspFields
+from yuuki.openc2_types import StatusCode, OpenC2RspFields, OpenC2CmdFields
 
 
 class MqttTransport:
@@ -39,6 +40,9 @@ class MqttTransport:
 
     def _on_message(self, client, userdata, msg):
         logging.debug(f'OnMessage: {msg.payload}')
+        #topic = re.sub(r'^/?oc2/cmd/?', '', msg.topic).split("/")
+        #profile = topic[1] if topic[0] == 'ap' else None  # Intended receiving profile
+
         try:
             encode = self.verify_properties(msg.properties)
         except ValueError:
