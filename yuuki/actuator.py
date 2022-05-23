@@ -2,30 +2,34 @@
 https://docs.oasis-open.org/openc2/oc2ls/v1.0/oc2ls-v1.0.html
 """
 from collections import defaultdict
-from typing import Callable, Dict, List, DefaultDict, NoReturn
-
+from typing import Callable, Dict, List, NoReturn
 from .openc2_types import OpenC2CmdFields, OpenC2RspFields
-
 
 OpenC2Function = Callable[[OpenC2CmdFields], OpenC2RspFields]
 
 
+def unimplemented_command() -> NoReturn:
+    raise NotImplementedError
+
+
 class Actuator:
+    dispatch: Dict[str, Dict[str, Dict[str, Callable]]]
+    pairs: Dict[str, List[str]]
+    nsid: str
 
     def __init__(self, nsid: str):
-        self.dispatch: DefaultDict[str: DefaultDict[str: Dict[str: Callable]]] = defaultdict(lambda: defaultdict(dict))
-        self.pairs: DefaultDict[str, List[str]] = defaultdict(list)
-        self.nsid: str = nsid
+        self.dispatch = {}
+        self.pairs = {}
+        self.nsid = nsid
 
     def pair(self, action: str, target: str, implemented: bool = True) -> Callable:
-        """Decorator for Actuator functions.
-
+        """
+        Decorator for Actuator functions.
         :param action: Name of the Action to be performed by the function
         :param target: Name of the Target of the Action
         :param implemented: Indicates whether the Command specified in the Actuator profile is supported or not
 
         Example:
-
         actuator = Actuator('my_actuator_nsid'):
             ...
             @actuator.pair('my_action', 'my_target'):
@@ -46,8 +50,8 @@ class Actuator:
         return decorator
 
     def register_pair(self, function: OpenC2Function, action: str, target: str, implemented: bool = True) -> None:
-        """Adds function to the dispatch dictionary and the dictionary of Action-Target pairs.
-
+        """
+        Adds function to the dispatch dictionary and the dictionary of Action-Target pairs.
         :param function: The function to be called when the Consumer receives a Command matching the corresponding
             Action, Target, and nsid
         :param action: Name of the Action to be performed by the function
@@ -64,6 +68,3 @@ class Actuator:
         else:
             self.dispatch[action][target][self.nsid] = unimplemented_command
 
-
-def unimplemented_command() -> NoReturn:
-    raise NotImplementedError

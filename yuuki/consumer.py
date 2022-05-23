@@ -8,7 +8,7 @@ from pprint import pformat
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from collections import defaultdict
-from typing import Union, Callable, Dict, List, DefaultDict
+from typing import Any, Callable, Dict, List, Union
 
 from pydantic import ValidationError
 
@@ -18,30 +18,32 @@ from .serialization import Serialization
 
 
 class Consumer:
-    """Processes OpenC2 Commands and issues OpenC2 Responses
+    """
+    Processes OpenC2 Commands and issues OpenC2 Responses
     The base Consumer supports the 'query features' OpenC2 Command and JSON serialization.
     """
+    dispatch: Dict[str, Dict[str, Dict[str, Callable]]]
+    pairs: Dict[str, List[str]]
+    profiles: List[str]
+    rate_limit: int
+    versions: List[str]
+    serializations: Dict[str, Serialization]
 
-    def __init__(
-            self,
-            rate_limit: int,
-            versions: List[str],
-            actuators: List[Actuator] = None,
-            serializations: List[Serialization] = None
-    ):
+    def __init__(self, rate_limit: int, versions: List[str], actuators: List[Actuator] = None, serializations: List[Serialization] = None):
         """
         :param rate_limit: Maximum number of requests per minute supported by design or policy.
         :param versions: List of OpenC2 language versions supported.
         :param actuators: List of Actuators to be added to the Consumer.
         :param serializations: List of serializations to be added to the Consumer.
         """
-        self.dispatch: DefaultDict[str: DefaultDict[str: Dict[str: Callable]]] = defaultdict(lambda: defaultdict(dict))
-        self.pairs: DefaultDict[str, List[str]] = defaultdict(list)
-        self.pairs['query'].append('features')
-        self.profiles: List[str] = []
-        self.rate_limit: int = rate_limit
-        self.versions: List[str] = versions
-        self.serializations: Dict[str, Serialization] = {}
+        self.dispatch = {}
+        self.pairs = {
+            'query': ['features']
+        }
+        self.profiles = []
+        self.rate_limit = rate_limit
+        self.versions = versions
+        self.serializations = {}
         self.add_serialization(Serialization(name='json', deserialize=json.loads, serialize=json.dumps))
         if serializations is not None:
             for serialization in serializations:
@@ -61,11 +63,10 @@ class Consumer:
         ''')
 
     def process_command(self, command, encode: str) -> Union[str, bytes, None]:
-        """Processes an OpenC2 Command and return an OpenC2 Response.
-
+        """
+        Processes an OpenC2 Command and return an OpenC2 Response.
         :param command: The OpenC2 Command.
         :param encode: String specifying the serialization format for the Command/Response.
-
         :return: Serialized OpenC2 Response, or None if no Response was requested by the Command.
         """
         try:
@@ -128,23 +129,19 @@ class Consumer:
             openc2_rsp = OpenC2RspFields(status=StatusCode.INTERNAL_ERROR, status_text='Serialization failed')
             return self.create_response_msg(openc2_rsp, headers=openc2_msg.headers, encode='json')
 
-    def create_response_msg(self, response_body: OpenC2RspFields,  encode: str,
-                            headers: OpenC2Headers = None) -> Union[str, bytes]:
+    def create_response_msg(self, response_body: OpenC2RspFields,  encode: str, headers: OpenC2Headers = None) -> Union[str, bytes]:
         """
         Creates and serializes an OpenC2 Response.
-
         :param response_body: Information to populate OpenC2 Response fields.
         :param headers: Information to populate OpenC2 Response headers.
         :param encode: String specifying the serialization format for the Response.
-
         :return: Serialized OpenC2 Response
         """
-
         print("creating response")
-        #if hasattr(OpenC2CmdFields, "actuator"):
-            #sender = str(OpenC2CmdFields.actuator+"@"+getattr(OpenC2CmdFields.args, "host"))
-        #else: sender = str("OC2LS@"+getattr(OpenC2CmdFields.args, "host"))
-
+        # if hasattr(OpenC2CmdFields, "actuator"):
+        #   sender = str(OpenC2CmdFields.actuator+"@"+getattr(OpenC2CmdFields.args, "host"))
+        # else:
+        #   sender = str("OC2LS@"+getattr(OpenC2CmdFields.args, "host"))
 
         if headers is None:
             print("no headers")
@@ -152,9 +149,12 @@ class Consumer:
 
         else:
             print("found headers")
-            headers = OpenC2Headers(request_id=headers.request_id,
-                                    from_="Me, Dio", to=headers.from_,
-                                    created=round(time() * 1000))
+            headers = OpenC2Headers(
+                request_id=headers.request_id,
+                from_="Me, Dio",
+                to=headers.from_,
+                created=round(time() * 1000)
+            )
         message = OpenC2Msg(headers=headers, body=OpenC2Body(openc2=OpenC2Rsp(response=response_body)))
         response = message.dict(by_alias=True, exclude_unset=True, exclude_none=True)
         logging.info(f'Response:\n{pformat(response)}')
@@ -162,13 +162,11 @@ class Consumer:
         return self.serializations[encode].serialize(response)
 
     def _get_actuator_callable(self, oc2_msg: OpenC2Msg) -> Callable[[], OpenC2RspFields]:
-        """Identifies the appropriate function to perform the received OpenC2 Command.
-
+        """
+        Identifies the appropriate function to perform the received OpenC2 Command.
         :param oc2_msg: The OpenC2 Message received by the Consumer.
-
         :return: The function with the received OpenC2 Command supplied as an argument.
         """
-
         oc2_cmd = oc2_msg.body.openc2.request
         print(oc2_cmd.action+" "+oc2_cmd.target_name)
         print(self.dispatch)
@@ -191,24 +189,32 @@ class Consumer:
         return partial(function, oc2_cmd)
 
     def query_features(self, oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
-        """Implementation of the 'query features' Command as described in the OpenC2 Language Specification
+        """
+        Implementation of the 'query features' Command as described in the OpenC2 Language Specification
         https://docs.oasis-open.org/openc2/oc2ls/v1.0/oc2ls-v1.0.html#41-implementation-of-query-features-command
         """
         print("query features")
         if oc2_cmd.args is not None:
             if oc2_cmd.args.dict(exclude_unset=True).keys() != {'response_requested'}:
-                return OpenC2RspFields(status=StatusCode.BAD_REQUEST, status_text='Only arg response_requested allowed')
+                return OpenC2RspFields(
+                    status=StatusCode.BAD_REQUEST,
+                    status_text='Only arg response_requested allowed'
+                )
 
             if oc2_cmd.args.response_requested != 'complete':
-                return OpenC2RspFields(status=StatusCode.BAD_REQUEST,
-                                       status_text='Only arg response_requested=complete allowed')
+                return OpenC2RspFields(
+                    status=StatusCode.BAD_REQUEST,
+                    status_text='Only arg response_requested=complete allowed'
+                )
 
         target_specifiers = {'versions', 'profiles', 'pairs', 'rate_limit'}
-        features: list[str] = oc2_cmd.target['features']
+        features: List[str] = oc2_cmd.target['features']
 
         if not set(features).issubset(target_specifiers):
-            return OpenC2RspFields(status=StatusCode.BAD_REQUEST,
-                                   status_text='features field only allows versions, profiles, rate_limit, and pairs')
+            return OpenC2RspFields(
+                status=StatusCode.BAD_REQUEST,
+                status_text='features field only allows versions, profiles, rate_limit, and pairs'
+            )
 
         results = {}
         for target_specifier in target_specifiers:
@@ -221,9 +227,9 @@ class Consumer:
             return OpenC2RspFields(status=StatusCode.OK)
 
     def add_actuator_profile(self, actuator: Actuator) -> None:
-        """Adds the Actuator's functions to the Consumer and adds the Actuator's namespace identifier (nsid) to the
+        """
+        Adds the Actuator's functions to the Consumer and adds the Actuator's namespace identifier (nsid) to the
         list of supported profiles
-
         :param actuator: The Actuator whose functions will be added to the Consumer.
         """
         if actuator.nsid in self.profiles:
@@ -231,12 +237,19 @@ class Consumer:
         else:
             self.profiles.append(actuator.nsid)
             self.pairs.update(actuator.pairs)
-            self.dispatch.update(actuator.dispatch)
+            self._update_dispatch_rec(self.dispatch, actuator.dispatch)
 
     def add_serialization(self, serialization: Serialization) -> None:
-        """Adds the serialization to the Consumer, enabling it to serialize and deserialize messages using the
+        """
+        Adds the serialization to the Consumer, enabling it to serialize and deserialize messages using the
         serialization's methods.
-
         :param serialization: The serialization to be added to the Consumer.
         """
         self.serializations[serialization.name] = serialization
+
+    def _update_dispatch_rec(self, update: Dict[str, Any], data: Dict[str, Any]) -> None:
+        for key, val in data.items():
+            if isinstance(val, dict):
+                self._update_dispatch_rec(update.setdefault(key, {}), val)
+            else:
+                update.update({key: val})

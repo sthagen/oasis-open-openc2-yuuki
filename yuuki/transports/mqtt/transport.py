@@ -1,21 +1,26 @@
-"""MQTT Consumer
+"""
+MQTT Consumer
 https://docs.oasis-open.org/openc2/transf-mqtt/v1.0/transf-mqtt-v1.0.html
 """
-
 import logging
 import re
-
 import paho.mqtt.client as mqtt
+
+from typing import Any
 from paho.mqtt.packettypes import PacketTypes
 from paho.mqtt.properties import Properties
-
-from .config import MqttConfig
 from yuuki.consumer import Consumer
-from yuuki.openc2_types import StatusCode, OpenC2RspFields, OpenC2CmdFields
+from yuuki.openc2_types import StatusCode, OpenC2RspFields
+from .config import MqttConfig
 
 
 class MqttTransport:
-    """Implements transport functionality for MQTT"""
+    """
+    Implements transport functionality for MQTT
+    """
+    consumer: Consumer
+    config: MqttConfig
+    _client: mqtt.Client
 
     def __init__(self, consumer: Consumer, config: MqttConfig):
         self.consumer = consumer
@@ -24,24 +29,28 @@ class MqttTransport:
         self._client.on_connect = self._on_connect
         self._client.on_message = self._on_message
         if self.config.broker.authorization.enable:
-            self._client.username_pw_set(username=self.config.broker.authorization.username,
-                                         password=self.config.broker.authorization.password)
+            self._client.username_pw_set(
+                username=self.config.broker.authorization.username,
+                password=self.config.broker.authorization.password
+            )
         if self.config.broker.authentication.enable:
             logging.info('Will use TLS')
-            self._client.tls_set(ca_certs=self.config.broker.authentication.ca_certs,
-                                 certfile=self.config.broker.authentication.certfile,
-                                 keyfile=self.config.broker.authentication.keyfile)
+            self._client.tls_set(
+                ca_certs=self.config.broker.authentication.ca_certs,
+                certfile=self.config.broker.authentication.certfile,
+                keyfile=self.config.broker.authentication.keyfile
+            )
 
-    def _on_connect(self, client, userdata, flags, reasonCode, properties):
+    def _on_connect(self, client: mqtt.Client, userdata: Any, flags: dict, rc: int, props: Properties = None):
         logging.debug('OnConnect')
         for subscription in self.config.subscriptions:
             logging.info(f'Subscribing --> {subscription.topic} {subscription.qos} ...')
             self._client.subscribe(subscription.topic, subscription.qos)
 
-    def _on_message(self, client, userdata, msg):
+    def _on_message(self, client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage):
         logging.debug(f'OnMessage: {msg.payload}')
-        #topic = re.sub(r'^/?oc2/cmd/?', '', msg.topic).split("/")
-        #profile = topic[1] if topic[0] == 'ap' else None  # Intended receiving profile
+        # topic = re.sub(r'^/?oc2/cmd/?', '', msg.topic).split("/")
+        # profile = topic[1] if topic[0] == 'ap' else None  # Intended receiving profile
 
         try:
             encode = self.verify_properties(msg.properties)
@@ -59,7 +68,7 @@ class MqttTransport:
                 logging.error('Publish failed', e)
 
     @staticmethod
-    def verify_properties(properties):
+    def verify_properties(properties: Properties):
         """
         Verifies that the MQTT Properties for the received OpenC2 Command are valid, and parses the message
         serialization format from the properties
@@ -96,17 +105,25 @@ class MqttTransport:
         openc2_properties.UserProperty = [('msgType', 'rsp'), ('encoding', encode)]
 
         for publication in self.config.publications:
-            message_info = self._client.publish(publication.topic, payload=response,
-                                                qos=publication.qos, properties=openc2_properties)
+            message_info = self._client.publish(
+                topic=publication.topic,
+                payload=response,
+                qos=publication.qos,
+                properties=openc2_properties
+            )
             logging.debug(f'Message Info: {message_info}')
             logging.info(f'Publishing --> qos: {publication.qos} \n{response}')
 
     def start(self):
         try:
             logging.info(f'Connecting --> {self.config.broker.host}:{self.config.broker.port}')
-            self._client.connect(host=self.config.broker.host, port=self.config.broker.port,
-                                 keepalive=self.config.broker.keep_alive,
-                                 clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY, properties=None)
+            self._client.connect(
+                host=self.config.broker.host,
+                port=self.config.broker.port,
+                keepalive=self.config.broker.keep_alive,
+                clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+                properties=None
+            )
             self._client.loop_forever()
         except ConnectionRefusedError:
             logging.error(f'BrokerConfig at {self.config.broker.host}:{self.config.broker.port} refused connection')

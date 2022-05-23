@@ -1,6 +1,6 @@
-"""OpenDXL Consumer
 """
-
+OpenDXL Consumer
+"""
 import signal
 import sys
 import threading
@@ -32,8 +32,14 @@ signal.signal(signal.SIGINT, handler)
 
 
 class OC2EventCallback(EventCallback):
-    """Handles received OpenDXL Events"""
-    def __init__(self, client, config, consumer):
+    """
+    Handles received OpenDXL Events
+    """
+    client: DxlClient
+    config: OpenDxlConfig
+    consumer: Consumer
+
+    def __init__(self, client: DxlClient, config: OpenDxlConfig, consumer: Consumer):
         super().__init__()
         self.client = client
         self.config = config
@@ -41,8 +47,7 @@ class OC2EventCallback(EventCallback):
 
     def on_event(self, event: Event):
         encode = event.other_fields.get('encoding', 'json')
-        if (event.other_fields.get('msgType') != 'req' or
-                event.other_fields.get('contentType') != 'application/openc2'):
+        if event.other_fields.get('msgType') != 'req' or event.other_fields.get('contentType') != 'application/openc2':
             oc2_body = OpenC2RspFields(status=StatusCode.BAD_REQUEST, status_text='Malformed Event Fields')
             response = self.consumer.create_response_msg(oc2_body, encode)
         else:
@@ -58,16 +63,20 @@ class OC2EventCallback(EventCallback):
 
 
 class OC2RequestCallback(RequestCallback):
-    """Handles received OpenDXL Requests"""
-    def __init__(self, client, consumer):
+    """
+    Handles received OpenDXL Requests
+    """
+    client: DxlClient
+    consumer: Consumer
+
+    def __init__(self, client: DxlClient, consumer: Consumer):
         super().__init__()
         self.client = client
         self.consumer = consumer
 
     def on_request(self, request: Request):
         encode = request.other_fields.get('encoding', 'json')
-        if (request.other_fields.get('msgType') != 'req' or
-                request.other_fields.get('contentType') != 'application/openc2'):
+        if request.other_fields.get('msgType') != 'req' or request.other_fields.get('contentType') != 'application/openc2':
             oc2_body = OpenC2RspFields(status=StatusCode.BAD_REQUEST, status_text='Malformed Request Fields')
             openc2_response = self.consumer.create_response_msg(oc2_body, encode)
         else:
@@ -75,16 +84,22 @@ class OC2RequestCallback(RequestCallback):
         opendxl_response = Response(request)
         if openc2_response is not None:
             opendxl_response.payload = openc2_response
-            opendxl_response.other_fields['encoding'] = encode
-            opendxl_response.other_fields['contentType'] = 'application/openc2'
-            opendxl_response.other_fields['msgType'] = 'rsp'
+            opendxl_response.other_fields.update(
+                encoding=encode,
+                contentType='application/openc2',
+                msgType='rsp'
+            )
         else:
             opendxl_response.payload = ''
         self.client.send_response(opendxl_response)
 
 
 class OpenDxlTransport:
-    """Implements transport functionality for OpenDXL"""
+    """
+    Implements transport functionality for OpenDXL
+    """
+    consumer: Consumer
+    config: OpenDxlConfig
 
     def __init__(self, consumer: Consumer, config: OpenDxlConfig):
         self.consumer = consumer
@@ -94,8 +109,7 @@ class OpenDxlTransport:
     def start(self):
         with DxlClient(self.dxl_client_config) as client:
             client.connect()
-            client.add_event_callback(self.config.event_request_topic,
-                                      OC2EventCallback(client, self.config, self.consumer))
+            client.add_event_callback(self.config.event_request_topic, OC2EventCallback(client, self.config, self.consumer))
             info = ServiceRegistrationInfo(client, "OC2Service")
             info.add_topic(self.config.service_topic, OC2RequestCallback(client, self.consumer))
             client.register_service_sync(info, 10)

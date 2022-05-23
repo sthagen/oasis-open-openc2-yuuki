@@ -1,4 +1,5 @@
-"""HTTP Consumer
+"""
+HTTP Consumer
 https://docs.oasis-open.org/openc2/open-impl-https/v1.0/open-impl-https-v1.0.html
 """
 import logging
@@ -6,14 +7,18 @@ import logging
 from flask import Flask, request, make_response
 from werkzeug.http import parse_options_header
 from waitress import serve
-
-from .config import HttpConfig
 from yuuki.consumer import Consumer
 from yuuki.openc2_types import StatusCode, OpenC2RspFields
+from .config import HttpConfig
 
 
 class HttpTransport:
-    """Implements transport functionality for HTTP"""
+    """
+    Implements transport functionality for HTTP
+    """
+    consumer: Consumer
+    config: HttpConfig
+    app: Flask
 
     def __init__(self, consumer: Consumer, config: HttpConfig):
         self.consumer = consumer
@@ -51,7 +56,6 @@ class HttpTransport:
         format from the headers
 
         :param headers: HTTP headers from received OpenC2 Command.
-
         :return: String specifying the serialization format of the received OpenC2 Command.
         """
         logging.debug(f'Message Headers:\n{headers}')

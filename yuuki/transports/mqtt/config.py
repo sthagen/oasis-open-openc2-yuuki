@@ -1,5 +1,4 @@
 from typing import Optional, List
-
 from pydantic import BaseSettings, validator
 
 
@@ -26,9 +25,9 @@ class BrokerConfig(BaseSettings):
 
 
 class Subscription(BaseSettings):
-    """Topic Filter and QoS for one subscription.
-
-    Create one of these for each Command source.
+    """
+    Topic Filter and QoS for one subscription
+    Create one of these for each Command source
     """
     topic: str = 'oc2/cmd'
     qos: int = 1
@@ -41,9 +40,9 @@ class Subscription(BaseSettings):
 
 
 class Publication(BaseSettings):
-    """Topic Name and QoS for one publish destination.
-
-    Create one of these for each Response destination.
+    """
+    Topic Name and QoS for one publish destination
+    Create one of these for each Response destination
     """
     topic: str = 'oc2/rsp'
     qos: int = 1
@@ -56,10 +55,9 @@ class Publication(BaseSettings):
 
 
 class MqttConfig(BaseSettings):
-    """Configuration object to be passed to Mqtt Transport init.
-
-    Accept the defaults or customize as necessary.
-
+    """
+    Configuration object to be passed to Mqtt Transport init
+    Accept the defaults or customize as necessary
     broker: socket, client_id, authorization, authentication
     subscriptions: list of topic/qos objects for Commands
     publications: list of topic/qos objects for Responses
