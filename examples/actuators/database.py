@@ -46,6 +46,7 @@ with open(path.join(act_dir, 'osquery_conf.ini'), "r") as f:
     config.read_file(f)
 v = config['osquery']["socket"]
 orm = OsQueryDatabase(f'{v}')
+print("connecting to ORM at "+str(v))
 orm.connect()
 
 

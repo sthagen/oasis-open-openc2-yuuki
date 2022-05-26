@@ -59,11 +59,7 @@ class Actuator:
         :param implemented: Indicates whether the Command specified in the Actuator profile is supported or not
         """
         if implemented:
-            # if action in self.pairs[action]:
-            #     self.dispatch[action][target][self.nsid] = function
-            #     self.pairs[action][target] = self.pairs[action][target]
-            # else:
-            self.dispatch.setdefault(action, defaultdict()).setdefault(target, {})[self.nsid] = function
+            self.dispatch.setdefault(action, {}).setdefault(target, {})[self.nsid] = function
             self.pairs.setdefault(action, []).append(target)
         else:
             self.dispatch[action][target][self.nsid] = unimplemented_command

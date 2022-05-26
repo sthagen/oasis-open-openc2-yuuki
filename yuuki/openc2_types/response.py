@@ -4,6 +4,7 @@ https://docs.oasis-open.org/openc2/oc2ls/v1.0/oc2ls-v1.0.html
 
 For validating and parsing OpenC2 Messages
 """
+import json
 from enum import IntEnum
 from typing import Optional, Dict, Any
 from pydantic import BaseModel, Extra
@@ -38,3 +39,4 @@ class OpenC2RspFields(BaseModel, extra=Extra.forbid):
 
 class OpenC2Rsp(BaseModel, extra=Extra.forbid):
     response: OpenC2RspFields
+

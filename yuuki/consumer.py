@@ -92,7 +92,8 @@ class Consumer:
 
         try:
             actuator_callable = self._get_actuator_callable(openc2_msg)
-        except TypeError:
+        except TypeError as e:
+            logging.error(e)
             openc2_rsp = OpenC2RspFields(status=StatusCode.NOT_FOUND, status_text='No matching Actuator found')
             return self.create_response_msg(openc2_rsp, headers=openc2_msg.headers, encode=encode)
 
@@ -124,12 +125,12 @@ class Consumer:
         try:
             return self.create_response_msg(openc2_rsp, headers=openc2_msg.headers, encode=encode)
         except Exception as e:
-            logging.exception('Serialization failed')
+            logging.exception('Serialization error occurred')
             logging.error(e)
             openc2_rsp = OpenC2RspFields(status=StatusCode.INTERNAL_ERROR, status_text='Serialization failed')
             return self.create_response_msg(openc2_rsp, headers=openc2_msg.headers, encode='json')
 
-    def create_response_msg(self, response_body: OpenC2RspFields,  encode: str, headers: OpenC2Headers = None) -> Union[str, bytes]:
+    def create_response_msg(self, response_body,  encode: str, headers: OpenC2Headers = None) -> Union[str, bytes]:
         """
         Creates and serializes an OpenC2 Response.
         :param response_body: Information to populate OpenC2 Response fields.
@@ -138,27 +139,24 @@ class Consumer:
         :return: Serialized OpenC2 Response
         """
         print("creating response")
-        # if hasattr(OpenC2CmdFields, "actuator"):
-        #   sender = str(OpenC2CmdFields.actuator+"@"+getattr(OpenC2CmdFields.args, "host"))
-        # else:
-        #   sender = str("OC2LS@"+getattr(OpenC2CmdFields.args, "host"))
 
         if headers is None:
-            print("no headers")
-            headers = OpenC2Headers(from_="Me, Dio")
+            # print("debugging: no headers")
+            headers = OpenC2Headers(from_="Yuuki")
 
         else:
-            print("found headers")
+            # print("debugging: found headers")
             headers = OpenC2Headers(
                 request_id=headers.request_id,
-                from_="Me, Dio",
+                from_="Yuuki",
                 to=headers.from_,
                 created=round(time() * 1000)
             )
+
         message = OpenC2Msg(headers=headers, body=OpenC2Body(openc2=OpenC2Rsp(response=response_body)))
         response = message.dict(by_alias=True, exclude_unset=True, exclude_none=True)
         logging.info(f'Response:\n{pformat(response)}')
-        print("response on the way?")
+        print("debugging: response on the way")
         return self.serializations[encode].serialize(response)
 
     def _get_actuator_callable(self, oc2_msg: OpenC2Msg) -> Callable[[], OpenC2RspFields]:
@@ -168,7 +166,7 @@ class Consumer:
         :return: The function with the received OpenC2 Command supplied as an argument.
         """
         oc2_cmd = oc2_msg.body.openc2.request
-        print(oc2_cmd.action+" "+oc2_cmd.target_name)
+        print(f"{oc2_cmd.action} {oc2_cmd.target_name} {oc2_cmd.actuator_name}")
         print(self.dispatch)
         if oc2_cmd.action == 'query' and oc2_cmd.target_name == 'features':
             function = self.query_features
@@ -217,6 +215,11 @@ class Consumer:
             )
 
         results = {}
+        if "pairs" in target_specifiers:
+            target_specifiers.remove("pairs")
+            results["pairs"] = {k: list(v.keys()) for k, v in self.dispatch.items()}
+            results["pairs"].setdefault("query", []).append("features")
+
         for target_specifier in target_specifiers:
             if target_specifier in features:
                 results[target_specifier] = getattr(self, target_specifier)

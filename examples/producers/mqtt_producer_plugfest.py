@@ -21,6 +21,7 @@ def on_message(client, userdata, msg):
     client.disconnect()
 
 
+#try making this pull from a file later
 mqtt_client = mqtt.Client(protocol=mqtt.MQTTv5)
 mqtt_client.username_pw_set(
     username='plug',
@@ -34,7 +35,10 @@ mqtt_client.subscribe(
 )
 mqtt_client.publish(
     topic="oc2/cmd",
-    payload=json.dumps(openc2_command.query_SBOM),
+    # enter your OpenC2 Command here!
+    # we reference a file with query_database, query_sbom, and query_features,
+    # but as long as you set payload to a json OC2 cmd, you should be good to go
+    payload=json.dumps(openc2_command.query_features),
     qos=1,
     retain=False,
     properties=oc2_properties

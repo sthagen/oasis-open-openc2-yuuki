@@ -43,7 +43,7 @@ query_features = {
 }
 
 
-query_SBOM = {
+query_sbom = {
     "headers": {
         "request_id": str(uuid.uuid4()),
         "created": round(time.time() * 1000),
@@ -54,7 +54,7 @@ query_SBOM = {
             "request": {
                 "action": "query",
                 "target": {
-                    "SBOM": []
+                    "sbom": []
                      }
             }
         }
