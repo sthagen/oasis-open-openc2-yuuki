@@ -1,288 +1,194 @@
-# Introduction
-
-Yuuki is a lightweight OpenC2 framework that comes with example Consumers, all built on an extensible library, with default support for **HTTP** and **MQTT** protocols. It serves a few purposes:
-
-* Provide [ready-made examples](#simple-example-http) to
-  * Introduce you to OpenC2
-  * Test against your own OpenC2 Producer
-* Provide a library to
-  * Ease implementation of Actuator Profiles
-  * Ease experimentation with different Transports, Serializations and Validators
-
-To jump right in, head over to the examples directory, or follow along below for a guided tour.
-
-# Closed Issues
-
-* [x] Support HTTP Transport
-* [x] Support MQTT Transport
-* [x] Support JSON serialization
-* [x] Allow swapping in new serializations
-* [x] Allow swapping in new transports
-* [x] Allow swapping in new validation
-* [x] Support TLS
-* [x] Support Running Multiple Actuator Profiles At Once
-
-# Open Issues
-
-* [ ] None! Please open a new issue! 
-
 # Yuuki
 
-A Yuuki Consumer is a program that listens for OpenC2 Commands sent from an OpenC2 Producer. It uses received commands to control an actuator(s). The sequence diagram below shows the basic flow of an OpenC2 Message in Yuuki, from receiving a Command to sending a Response.
+## Introduction
+
+Yuuki is a framework for creating OpenC2 Consumers. It serves a few purposes:
+
+* Provide an introduction to OpenC2
+* Provide an OpenC2 Consumer for OpenC2 Producers to test against
+* Facilitate experimentation with different Actuator profiles, transfer protocols and message serializations
 
 
-#### Architecture
+## Consumers
 
-```
-OpenC2 Producer               ----------------- Yuuki (OpenC2 Consumer)-----------------       Command
-    |                         |                                                        |       Handler
-    |                         |                                                        |      (Actuator)
-    |                         | Transport     Serialize /      Validate       Command  |           |
-    |                         | Endpoint      Deserialize         |           Dispatch |           |
-    |                         |    |               |              |              |     |           |
-    v                         |    |               |              |              |     |           |
-                              |    v               v              v              v     |           v
-    |         Network         |                                                        |              
-    | ------------------------|--> |                                                   |              
-    |       OpenC2 Command    |    |                                                   |              
-            (serialized)      |    | ------------> |                                   |              
-                              |                    | (Python Dict)                     |            
-                              |                    | -----------> | OpenC2 Command     |              
-                              |                                   |  (Python Obj)      |              
-                              |                                   | ------------> |    |              
-                              |                                                   |    |              
-                              |                                                   | ---|---------> |
-                              |                                                   |    |           |
-                              |                                                   | <--|---------- |
-                              |                                                   |    |              
-                              |                    | <--------------------------- |    |             
-                              |                    |        OpenC2 Response            |              
-                              |    | <------------ |          (Python Obj)             |     
-    |                         |    |                                                   |              
-    | <-----------------------|--- |                                                   |              
-    |      OpenC2 Response    |                                                        |              
-             (serialized)     ----------------------------------------------------------              
-
-```
-
-Yuuki is designed so that any of these steps can be customized or replaced.
-
-* Want to use **MQTT**, **HTTP** or even add a **new transport**? 
-* Want to serialize your messages with **CBOR** instead of **JSON**?
-* Want to use a **schema** validation tool, instead of simple Python functions to validate OpenC2 Messages?
-
-For all of these goals, the solution is to swap out what you'd like replace. Each step is independent of the others.
-
-For example, look at how the main OpenC2 Consumer is contructed in **simple_http.py** in the *examples* folder:
+A Consumer is initialized with a rate limit and a list of OpenC2 language versions that it supports, as well as an optional list of [Actuators](#actuators) and an optional list of [Serializations](#serializations).
 
 ```python
-consumer = Consumer( 
-    cmd_handler   = CmdHandler(validator = validate_and_convert),
-    transport     = Http(http_config),
-    serialization = Json )
+from yuuki import Consumer
+
+consumer = Consumer(rate_limit=60, versions=['1.0'], actuators=[], serializations=[])
 ```
 
-See the **Json**, **Http** and **validate_and_convert** arguments? Simply replace any of those with a library of your own; just as long as you follow the same Yuuki interface.
+OpenC2 Commands are processed using the `process_command` method which takes a serialized OpenC2 Command as well as a string identifying the serialization protocol and returns a serialized Response.
 
-Before getting ahead of ourselves with customization, let's just run a simple example: HTTP
+```python
+consumer.process_command(command, 'json')
+```
 
-# Installation
+The Consumer also provides a method to create a serialized Response message without processing a Command.
 
-Using Python3.7+, install with venv and pip:
+```python
+from yuuki import OpenC2RspFields
+
+consumer.create_response_msg(response_body=OpenC2RspFields(), encode='json')
+```
+
+
+## Actuators
+
+By default, the Consumer only supports a single Command: `query features`.
+The set of Commands supported by the Consumer can be extended with Actuators, which can be added to the Consumer either during or after its initialization.
+
+For example, see the sample implementation of an Actuator based on the [Stateless Packet Filtering](https://docs.oasis-open.org/openc2/oc2slpf/v1.0/oc2slpf-v1.0.html) Actuator profile in `examples/actuators/slpf.py`
+
+An Actuator is identified by a string representing the namespace identifier (nsid) of its Actuator profile.
+[Stateless Packet Filtering](https://docs.oasis-open.org/openc2/oc2slpf/v1.0/oc2slpf-v1.0.html) is a standard Actuator profile with the nsid: `slpf`.
+The nsids of nonstandard Actuator profiles must be prefixed with `x-`.
+
+```python
+from yuuki import Actuator
+
+example = Actuator(nsid='x-example')
+```
+
+After an Actuator is initialized, functions that correspond to Commands that the Actuator supports should be added to it.
+These functions should have an `OpenC2CmdFields` object as their only parameter and return an `OpenC2RspFields` object.
+
+The `pair` decorator is used to indicate to the Actuator which Command a function is intended to support.
+
+```python
+from yuuki import OpenC2CmdFields, OpenC2RspFields, StatusCode
+
+@example.pair('action', 'target')
+def example_command(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
+    return OpenC2RspFields(status=StatusCode.OK)
+```
+
+Functions for Commands that are specified in the Actuator profile, but not implemented by the Actuator should set the `implemented` argument to `False`.
+
+```python
+@example.pair('action', 'target', implemented=False)
+def unsupported_command(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
+    pass
+```
+
+
+## Serializations
+
+Serialization objects are used to add support for different methods of decoding and encoding messages to the Consumer.
+They are initialized with three arguments: the string that will be used to identify the protocol in OpenC2 Messages, a function for decoding messages, and a function for encoding messages. The Consumer class comes with support for JSON.
+```python
+import json
+from yuuki import Serialization
+
+Serialization(name='json', deserialize=json.loads, serialize=json.dumps)
+```
+
+
+## Installation
+
+Using Python3.8+, install with venv and pip:
 ```sh
 mkdir yuuki
 cd yuuki
-python3.7 -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 git clone THIS_REPO
 pip install ./openc2-yuuki
 ```
 
-# Simple Example: HTTP
 
-Running HTTP locally shouldn't require any configuration. Run the HTTP consumer `simple_http.py` in the *examples* directory with
+## Examples
 
-```sh
-python simple_http.py
-```
+An example Consumer utilizing different transport protocols, as well as sample Producer scripts have been provided in the `examples` directory.
 
-## Test HTTP Transport
-
-### Publish an OpenC2 Command
-In a new terminal window, go back to the root "yuuki" folder, then enable the virtual environment and start a Python shell.
-
-```sh
-source venv/bin/activate
-python
-```
-
-Copy this text into the shell.
-
-```python
-import requests
-import json
-
-query_features = {
-        "action": "query",
-        "target": {
-            "features": ["versions","profiles"]
-        },
-        "args": {
-            "response_requested": "complete"
-        }
-    }
-
-as_json = json.dumps(query_features)
-headers = {"Content-Type" : "application/openc2-cmd+json;version=1.0"}
-
-response = requests.post("http://127.0.0.1:9001", json=as_json, headers=headers, verify=False)
-
-print('Sent OpenC2 Command')
-print(json.dumps(response.json(), indent=4))
-pass
-```
-
-Because we're testing locally, you should instantly see the OpenC2 Response, similar to this.
+To demonstrate the OpenC2 Consumer, each Producer sends an OpenC2 Command similar to the following:
 
 ```json
 {
-    "status": 200,
-    "status_text": "OK - the Command has succeeded.",
-    "results": {
-        "versions": [
-            "1.0"
-        ],
-        "profiles": [
-            "slpf"
-        ]
+    "headers": {
+        "request_id": "f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+        "created": 1619554273604,
+        "from": "Producer1"
+    },
+    "body": {
+        "openc2": {
+            "request": {
+                "action": "query",
+                "target": {
+                    "features": []
+                }
+            }
+        }
     }
 }
 ```
 
-*When done with this Producer shell, type exit() and hit enter*
+After sending the Command, the Producer should receive a Response similar to the following:
 
-Success! The Yuuki Consumer successfully received an OpenC2 Command, then returned an Openc2 Response.
-
-### Shut Down
-In the Yuuki Consumer shell, hit CTRL-C to stop the process.
-
-# Advanced Example: MQTT
-MQTT requires a little configuration. We'll need to connect to an MQTT broker. Mosquitto is a free broker that's always up (and offers no privacy).
-
-At the bottom of `advanced_mqtt.py` in the *examples* directory, supply the socket address for the broker.
-
-```python
-    mqtt_config = MqttConfig(
-                    broker=BrokerConfig(
-                        socket='test.mosquitto.org:1883'))
-```
-
-Save your file and start the advanced example:
-
-```sh
-python advanced_mqtt.py
-```
-
-That's it! Your OpenC2 MQTT Consumer is ready for any published commands. If you're familiar with MQTT, by default Yuuki listens for OpenC2 commands on the topic **yuuki_user/oc2/cmd**, and publishes its responses to **yuuki_user/oc2/rsp**. Next, we'll write some quick scripts to make sure it's working.
-
-If you'd like to change the topics, you can like so:
-
-```python
-    mqtt_config = MqttConfig(
-                    ...
-                    subscriptions=[Subscription('subcribe/to/command/topic', 1),
-                                   Subscription('another/command/topic', 0)],
-                    publishes=[Publish('publish/responses/here', 0),
-                               Publish('another/response/topic', 3)])
-```
-
-## Test MQTT Transport
-
-### Subscribe to OpenC2 Responses
-In a new terminal window, go back to the root "yuuki" folder, then enable the virtual environment and start a Python shell.
-
-```sh
-source venv/bin/activate
-python
-```
-
-Copy this text into the shell.
-
-```python
-import paho.mqtt.client as mqtt
-import json
-
-def on_connect(client, userdata, flags, rc):
-    print("Connected to broker. Result:", str(rc))
-    topic_filter = "yuuki_user/oc2/rsp"
-    client.subscribe(topic_filter)
-    print("Listening for OpenC2 responses on", topic_filter)
-
-def on_message(client, userdata, msg):
-    print("MESSAGE FROM TOPIC {} START:".format(msg.topic))
-    print(json.dumps(json.loads(msg.payload), indent=4))
-    print("MESSAGE END.\n")
-
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
-client.connect("test.mosquitto.org", 1883, 60)
-client.loop_forever()
-pass
-
-```
-
-*Later, when done with this shell, hit CTRL-C, then type exit() and hit enter*
-
-### Publish an OpenC2 Command
-In _yet_ _another_ terminal window, enable the virtual environment and start a Python shell.
-
-```sh
-source venv/bin/activate
-python
-```
-
-Copy this text into the shell.
-
-```python
-import paho.mqtt.publish as publish
-import json
-
-query_features = {
-        "action": "query",
-        "target": {
-            "features": ["pairs", "versions"]
-        },
-        "args": {
-            "response_requested": "complete"
-        }
-    }
-
-as_json = json.dumps(query_features)
-
-publish.single("yuuki_user/oc2/cmd", payload=as_json, hostname="test.mosquitto.org", port=1883)
-pass
-
-```
-
-*Later, when done with this shell, type exit() and hit enter*
-
-### Check Results
-Go back to the previous subscription shell, and there should be a JSON OpenC2 response message, similiar to this:
 ```json
 {
-    "status": 200,
-    "status_text": "OK - the Command has succeeded.",
-    "results": {
-        "versions": [
-            "1.0"
-        ],
-        "pairs": [
-            "slpf"
-        ]
+    "headers": {
+        "request_id": "f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+        "created": 1619554273604,
+        "to": "Producer1",
+        "from": "yuuki"
+    },
+    "body": {
+        "openc2": {
+            "response": {
+                "status": 200
+            }
+        }
     }
 }
 ```
 
-Success! The Yuuki Consumer successfully received an OpenC2 Command, then published an Openc2 Response.
+The Examples should be run under the virtual environment created during installation:
+```sh
+source venv/bin/activate
+```
 
+### HTTP
+
+#### Start Consumer:
+```sh
+python examples/http_example.py
+```
+
+#### Publish an OpenC2 Command:
+```sh
+python examples/producers/http_producer.py
+```
+
+### MQTT
+A connection to an MQTT broker is required. A publicly available MQTT broker is hosted at [test.mosquitto.org](https://test.mosquitto.org).
+
+#### Start Consumer:
+```sh
+python examples/mqtt_example.py --host test.mosquitto.org
+```
+
+#### Publish an OpenC2 Command:
+```sh
+python producers/mqtt_producer.py --host test.mosquitto.org
+```
+
+### OpenDXL
+
+| :warning:        | *Support for OpenDXL is experimental*|
+|------------------|:-------------------------------------|
+
+This example uses both the Event and Request/Response messaging capabilities of OpenDXL to send and receive OpenC2 Messages.
+
+An OpenDXL configuration file is required to run these examples.
+
+#### Start Consumer:
+```sh
+python examples/opendxl_example.py PATH_TO_OPENDXL_CONFIG
+```
+
+#### Publish an OpenC2 Command:
+```sh
+python examples/producers/opendxl_producer.py PATH_TO_OPENDXL_CONFIG
+```
