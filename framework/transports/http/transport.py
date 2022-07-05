@@ -23,7 +23,7 @@ class HttpTransport:
     def __init__(self, consumer: Consumer, config: HttpConfig):
         self.consumer = consumer
         self.config = config
-        self.app = Flask('yuuki')
+        self.app = Flask('framework')
         self.app.add_url_rule('/', view_func=self.receive, methods=['POST'])
 
     def receive(self):

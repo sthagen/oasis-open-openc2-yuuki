@@ -11,7 +11,7 @@ def get_requirements():
 setup(
     name='Yuuki',
     package_data={
-        'Yuuki': ['./yuuki/*']
+        'Yuuki': ['./framework/*']
     },
     install_requires=get_requirements()
 )

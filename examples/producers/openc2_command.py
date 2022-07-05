@@ -54,7 +54,7 @@ query_sbom = {
             "request": {
                 "action": "query",
                 "target": {
-                    "sbom": []
+                    "sbom": {}
                      }
             }
         }
