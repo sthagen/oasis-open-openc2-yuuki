@@ -6,7 +6,7 @@ from configparser import ConfigParser
 from osquery_orm import OsQueryDatabase
 from peewee import ModelSelect
 
-from yuuki import Actuator, OpenC2CmdFields, OpenC2RspFields, StatusCode
+from oc2_arch import Actuator, OpenC2CmdFields, OpenC2RspFields, StatusCode
 
 database = Actuator(nsid='database')
 

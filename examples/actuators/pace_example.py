@@ -2,7 +2,7 @@ import osquery
 import nmap
 from elasticsearch import Elasticsearch
 
-from yuuki import Actuator, OpenC2CmdFields, OpenC2RspFields, StatusCode
+from oc2_arch import Actuator, OpenC2CmdFields, OpenC2RspFields, StatusCode
 
 
 pace = Actuator(nsid='x-pace')

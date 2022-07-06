@@ -89,12 +89,12 @@ Serialization(name='json', deserialize=json.loads, serialize=json.dumps)
 
 Using Python3.8+, install with venv and pip:
 ```sh
-mkdir framework
-cd framework
+mkdir oc2_arch
+cd oc2_arch
 python3 -m venv venv
 source venv/bin/activate
 git clone THIS_REPO
-pip install ./openc2-framework
+pip install ./openc2-oc2_arch
 ```
 
 
@@ -132,7 +132,7 @@ After sending the Command, the Producer should receive a Response similar to the
         "request_id": "f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
         "created": 1619554273604,
         "to": "Producer1",
-        "from": "framework"
+        "from": "oc2_arch"
     },
     "body": {
         "openc2": {

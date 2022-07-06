@@ -5,7 +5,7 @@ Conformant to Conformance Clauses 12, 14, 16
 
 from ipaddress import ip_network
 
-from yuuki import Actuator, OpenC2CmdFields, OpenC2RspFields, StatusCode
+from oc2_arch import Actuator, OpenC2CmdFields, OpenC2RspFields, StatusCode
 
 pf = Actuator(nsid='pf')
 

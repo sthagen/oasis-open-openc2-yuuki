@@ -5,7 +5,7 @@ Conformant to Conformance Clauses ?
 import json
 import os
 from pathlib import Path
-from yuuki import Actuator, OpenC2CmdFields, OpenC2RspFields, StatusCode
+from oc2_arch import Actuator, OpenC2CmdFields, OpenC2RspFields, StatusCode
 
 sbom = Actuator(nsid='sbom')
 

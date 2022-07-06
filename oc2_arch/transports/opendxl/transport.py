@@ -11,8 +11,8 @@ from dxlclient.callbacks import EventCallback, RequestCallback
 from dxlclient.message import Event, Request, Response
 from dxlclient.service import ServiceRegistrationInfo
 
-from yuuki.consumer import Consumer
-from yuuki.openc2_types import StatusCode, OpenC2RspFields
+from oc2_arch.consumer import Consumer
+from oc2_arch.openc2_types import StatusCode, OpenC2RspFields
 from .config import OpenDxlConfig
 
 
