@@ -10,10 +10,10 @@ from oc2_arch import Actuator, OpenC2CmdFields, OpenC2RspFields, StatusCode
 sbom = Actuator(nsid='sbom')
 
 sbom_formats = {
-    "cyclonedx": os.path.join(Path(__file__).resolve().parent, "CycloneExample.bom.1.3.json"),
-    "cyclone": os.path.join(Path(__file__).resolve().parent, "CycloneExample.bom.1.3.json"),
-    "spdx2": os.path.join(Path(__file__).resolve().parent, "SPDXJSONExample-v2.2.spdx.json"),
-    "default": os.path.join(Path(__file__).resolve().parent, "SPDXJSONExample-v2.2.spdx.json")
+    "cyclonedx": os.path.join(Path(__file__).resolve().parent, "files/CycloneExample.bom.1.3.json"),
+    "cyclone": os.path.join(Path(__file__).resolve().parent, "files/CycloneExample.bom.1.3.json"),
+    "spdx2": os.path.join(Path(__file__).resolve().parent, "files/SPDXJSONExample-v2.2.spdx.json"),
+    "default": os.path.join(Path(__file__).resolve().parent, "files/SPDXJSONExample-v2.2.spdx.json")
 }
 
     #These functions will be changed when there is knowledge of the Actions or Targets involved in SBOM
@@ -28,15 +28,15 @@ def query_sbom(oc2_cmd: OpenC2CmdFields) ->OpenC2RspFields:
     if c := query_fields.pop("content", None):
         for element in c:
             if element == "cyclonedx":
-                sbom_file = os.path.join(Path(__file__).resolve().parent, "CycloneExample.bom.1.3.json")
+                sbom_file = os.path.join(Path(__file__).resolve().parent, "files/CycloneExample.bom.1.3.json")
             elif element == "cyclone":
-                sbom_file = os.path.join(Path(__file__).resolve().parent, "CycloneExample.bom.1.3.json")
+                sbom_file = os.path.join(Path(__file__).resolve().parent, "files/CycloneExample.bom.1.3.json")
             elif element == "spdx2":
-                sbom_file = os.path.join(Path(__file__).resolve().parent, "SPDXJSONExample-v2.2.spdx.json")
+                sbom_file = os.path.join(Path(__file__).resolve().parent, "files/SPDXJSONExample-v2.2.spdx.json")
             else:
-                sbom_file = os.path.join(Path(__file__).resolve().parent, "SPDXJSONExample-v2.2.spdx.json")
+                sbom_file = os.path.join(Path(__file__).resolve().parent, "files/SPDXJSONExample-v2.2.spdx.json")
     else:
-        sbom_file = os.path.join(Path(__file__).resolve().parent, "SPDXJSONExample-v2.2.spdx.json")
+        sbom_file = os.path.join(Path(__file__).resolve().parent, "files/SPDXJSONExample-v2.2.spdx.json")
 
     if os.path.exists(sbom_file):
         with open(sbom_file, "r") as f:

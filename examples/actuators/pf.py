@@ -205,7 +205,7 @@ def update_file(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
 
 @pf.pair('delete', 'pf:rule_number', implemented=False)
 def delete_rule_number(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
-    if isinstance(oc2_cmd.target['pf:rule_number'], integer):
+    if isinstance(oc2_cmd.target['pf:rule_number'], int):
         # Execute a real function here
         pass
     else:
@@ -214,7 +214,7 @@ def delete_rule_number(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
 
 @pf.pair('query', 'rule_number', implemented=False)
 def query_rule_number(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
-    if isinstance(oc2_cmd.target['rule_number'], integer):
+    if isinstance(oc2_cmd.target['rule_number'], int):
         # Execute a real function here
         pass
     else:
