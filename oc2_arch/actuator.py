@@ -8,8 +8,9 @@ from .openc2_types import OpenC2CmdFields, OpenC2RspFields
 OpenC2Function = Callable[[OpenC2CmdFields], OpenC2RspFields]
 
 
-def unimplemented_command() -> NoReturn:
-    raise NotImplementedError
+def unimplemented_command(action: str, target: str) -> str:
+    error_message = "Unimplemented Command "+action+" "+target
+    return error_message
 
 
 class Actuator:
@@ -62,5 +63,6 @@ class Actuator:
             self.dispatch.setdefault(action, {}).setdefault(target, {})[self.nsid] = function
             self.pairs.setdefault(action, []).append(target)
         else:
-            self.dispatch[action][target][self.nsid] = unimplemented_command
+            print(unimplemented_command(action, target))
+            pass
 
