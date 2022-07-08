@@ -132,9 +132,13 @@ def allow_ipv6_net(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
 
 @slpf.pair('update', 'file', implemented=False)
 def update_file(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
-    pass
+
+    status_text = f'Command Not Implemented'
+    return OpenC2RspFields(status=StatusCode.NOT_IMPLEMENTED, status_text=status_text)
 
 
 @slpf.pair('delete', 'slpf:rule_number', implemented=False)
 def delete_rule_number(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
-    pass
+
+    status_text = f'Command Not Implemented'
+    return OpenC2RspFields(status=StatusCode.NOT_IMPLEMENTED, status_text=status_text)

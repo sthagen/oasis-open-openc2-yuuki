@@ -35,7 +35,7 @@ query_features = {
             "request": {
                 "action": "query",
                 "target": {
-                    "features": []
+                    "features": ["profiles"]
                 }
             }
         }
@@ -55,6 +55,24 @@ query_sbom = {
                 "action": "query",
                 "target": {
                     "sbom": {}
+                     }
+            }
+        }
+    }
+}
+
+deny_ipv4_connection = {
+    "headers": {
+        "request_id": str(uuid.uuid4()),
+        "created": round(time.time() * 1000),
+        "from": "Producer1"
+    },
+    "body": {
+        "openc2": {
+            "request": {
+                "action": "deny",
+                "target": {
+                    "ipv4_connection": {}
                      }
             }
         }

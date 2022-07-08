@@ -10,9 +10,10 @@ from oc2_arch import Consumer
 
 from actuators.database import database
 from actuators.sbom import sbom
+from actuators.slpf import slpf
 
 
-consumer = Consumer(rate_limit=60, versions=['1.0'], actuators=[sbom, database]) #slpf here later
+consumer = Consumer(rate_limit=60, versions=['1.0'], actuators=[sbom, database, slpf])
 
 host = '35.221.11.97'
 port = 1883

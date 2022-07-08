@@ -38,7 +38,7 @@ mqtt_client.publish(
     # enter your OpenC2 Command here!
     # we reference a file with query_database, query_sbom, and query_features,
     # but as long as you set payload to a json OC2 cmd, you should be good to go
-    payload=json.dumps(openc2_command.query_sbom),
+    payload=json.dumps(openc2_command.query_features),
     qos=1,
     retain=False,
     properties=oc2_properties
