@@ -3,7 +3,7 @@ Example Implementation of an OpenC2 MQTT Consumer
 """
 import argparse
 
-from yuuki.transports import (
+from oc2_arch.transports import (
     MqttTransport,
     MqttConfig,
     MQTTAuthorization,
