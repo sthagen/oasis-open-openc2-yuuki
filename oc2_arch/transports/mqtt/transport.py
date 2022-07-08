@@ -9,8 +9,8 @@ import paho.mqtt.client as mqtt
 from typing import Any
 from paho.mqtt.packettypes import PacketTypes
 from paho.mqtt.properties import Properties
-from yuuki.consumer import Consumer
-from yuuki.openc2_types import StatusCode, OpenC2RspFields
+from oc2_arch.consumer import Consumer
+from oc2_arch.openc2_types import StatusCode, OpenC2RspFields
 from .config import MqttConfig
 
 
