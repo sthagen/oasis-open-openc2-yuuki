@@ -7,8 +7,8 @@ import logging
 from flask import Flask, request, make_response
 from werkzeug.http import parse_options_header
 from waitress import serve
-from yuuki.consumer import Consumer
-from yuuki.openc2_types import StatusCode, OpenC2RspFields
+from oc2_arch.consumer import Consumer
+from oc2_arch.openc2_types import StatusCode, OpenC2RspFields
 from .config import HttpConfig
 
 
@@ -23,7 +23,7 @@ class HttpTransport:
     def __init__(self, consumer: Consumer, config: HttpConfig):
         self.consumer = consumer
         self.config = config
-        self.app = Flask('yuuki')
+        self.app = Flask('oc2_arch')
         self.app.add_url_rule('/', view_func=self.receive, methods=['POST'])
 
     def receive(self):
