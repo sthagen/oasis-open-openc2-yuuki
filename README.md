@@ -46,7 +46,7 @@ An Actuator is identified by a string representing the namespace identifier (nsi
 The nsids of nonstandard Actuator profiles must be prefixed with `x-`.
 
 ```python
-from yuuki import Actuator
+from .actuator import Actuator
 
 example = Actuator(nsid='x-example')
 ```
@@ -89,12 +89,13 @@ Serialization(name='json', deserialize=json.loads, serialize=json.dumps)
 
 Using Python3.8+, install with venv and pip:
 ```sh
-mkdir oc2_arch
-cd oc2_arch
+mkdir yuuki
+cd yuuki
 python3 -m venv venv
 source venv/bin/activate
 git clone THIS_REPO
-pip install ./openc2-oc2_arch
+pip install -U -r requirements.txt 
+python3 setup.py <<branch>> 
 ```
 
 

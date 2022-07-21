@@ -8,16 +8,16 @@ from oc2_arch.transports import (
 from oc2_arch import Consumer
 # import actuator profiles for your consumer
 
-from actuators.database import database
-from actuators.sbom import sbom
+
+from actuators.er import er
 from actuators.slpf import slpf
 
 
-consumer = Consumer(rate_limit=60, versions=['1.0'], actuators=[sbom, database, slpf])
+consumer = Consumer(rate_limit=60, versions=['1.0'], actuators=[er, slpf])
 
 host = '35.221.11.97'
 port = 1883
-topics = ['oc2/cmd', 'oc2/cmd/ap/slpf', 'oc2/cmd/ap/database', 'oc2/cmd/ap/sbom']
+topics = ['oc2/cmd', 'oc2/cmd/ap/er']
 
 mqtt_config = MqttConfig(
     broker=BrokerConfig(

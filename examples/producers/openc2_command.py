@@ -52,7 +52,7 @@ query_sbom = {
     "body": {
         "openc2": {
             "request": {
-                "action": "query",
+
                 "target": {
                     "sbom": {}
                      }
