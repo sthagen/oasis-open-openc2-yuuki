@@ -9,6 +9,18 @@ Yuuki is a framework for creating OpenC2 Consumers. It serves a few purposes:
 * Facilitate experimentation with different Actuator profiles, transfer protocols and message serializations
 
 
+## Requirements and Setup
+* Python 3.6+
+* Pip3
+* a Virtual Environments Package
+
+    Create and work on a virtual environment you want to be running Yuuki
+    Create Build folder: python3 -m pip install -U -r requirements.txt
+    Run setup.py for the branch you want: python3 setup.py develop
+    If you plan to use other tools with your actuator, install them
+    Finally, run an example consumer file: python3 examples/mqtt_consumer_full.py
+
+
 ## Consumers
 
 A Consumer is initialized with a rate limit and a list of OpenC2 language versions that it supports, as well as an optional list of [Actuators](#actuators) and an optional list of [Serializations](#serializations).
