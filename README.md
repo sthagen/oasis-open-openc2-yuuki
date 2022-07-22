@@ -8,7 +8,7 @@
               \/                       \/   
 ```        
 
-## Table of Contents  
+# Table of Contents  
 
 [Introduction](#introduction)  
 [Requirements and Setup](#requirements-and-setup)  
@@ -70,9 +70,9 @@ or you can import them directly in the consumer itself, as shown in this example
 ```
 
 
-# Components of a Yuuki Consumer
+## Components of a Yuuki Consumer
 
-## Consumers  
+### Consumers  
 
 A Consumer is initialized with a rate limit and a list of OpenC2 language versions that it supports, as well as an optional list of [Actuators](#actuators) and an optional list of [Serializations](#serializations).
 
@@ -106,7 +106,7 @@ the Actuator and Serialization classes are used. Instances of these classes can 
 when it is initialized, or can be added later using the `add_actuator_profile` and `add_serialization` methods.
 
 
-## Actuators
+### Actuators
 
 By default, the Consumer class only supports a single Command: `query features`.
 The set of Commands supported by the Consumer is extended with Actuators, which can be added to the Consumer either during or after its initialization.
@@ -150,7 +150,7 @@ def unsupported_command(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
 ```
 
 
-## Serializations
+### Serializations
 
 Serialization objects are used to add support for different methods of decoding and encoding messages to the Consumer.
 They are initialized with three arguments: the string that will be used to identify the protocol in OpenC2 Messages, 
@@ -243,7 +243,7 @@ A connection to an MQTT broker is required. A publicly available MQTT broker is 
 
 #### Start Consumer:
 ```sh
-python examples/mqtt_example.py --host test.mosquitto.org
+python examples/mqtt_example_full.py --host test.mosquitto.org
 ```
 
 #### Publish an OpenC2 Command:
@@ -270,7 +270,7 @@ python examples/opendxl_example.py PATH_TO_OPENDXL_CONFIG
 python examples/producers/opendxl_producer.py PATH_TO_OPENDXL_CONFIG
 ```
 
-### Frequently Asked Questions:
+## Frequently Asked Questions:
 
 #### What is OpenC2?
 Open Command and Control, or OpenC2, is an OASIS Technical Committee Specification. 

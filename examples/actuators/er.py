@@ -16,8 +16,8 @@ er = Actuator(nsid='er')
 
 @er.pair('allow', 'domain_name', implemented=False)
 def allow_domain_name(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
-    pass
-
+    status_text = f'Command Not Implemented'
+    return OpenC2RspFields(status=StatusCode.NOT_IMPLEMENTED, status_text=status_text)
 
 @er.pair('allow', 'device', implemented=False)
 def allow_device(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
@@ -80,13 +80,15 @@ def deny_ipv6_net(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
             else:
                 found_other.append(key)
 
-    if len(found_keys) < 1 or len(found_other) > 0:
-        return OpenC2RspFields(status=StatusCode.BAD_REQUEST,
-                               status_text=f'Any of {str(allowed_keys)} required for ipv6_connection')
+        if len(found_keys) < 1 or len(found_other) > 0:
+            return OpenC2RspFields(status=StatusCode.BAD_REQUEST,
+                                    status_text=f'Any of {str(allowed_keys)} required for ipv6_connection')
 
-
-    pass
-    
+        else:
+            # Execute a real function here to deny...
+            return OpenC2RspFields(status=StatusCode.OK)
+    else:
+        return OpenC2RspFields(status=StatusCode.BAD_REQUEST)
 
 @er.pair('contain', 'device', implemented=False)
 def contain_device(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
@@ -187,13 +189,44 @@ def set_registry_entry(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
     pass
     
 
-@er.pair('set', 'account', implemented=False)
+@er.pair('set', 'account', implemented=True)
 def set_account(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
+    account_fields = oc2_cmd.target.get("account", {})
+    print(account_fields)
+    if oc2_cmd.args['account_status']:
+        if isinstance(oc2_cmd.args['account_status'], str):
+            status = str.lower(oc2_cmd.args['account_status'])
+            print(status)
+            if status == "enabled" or status == "disabled":
 
-    #requires arg account_status
+                #Mock Account Code Here
+                if c := account_fields.pop("uid", None):
+                    for element in c:
+                        er_file = os.path.join(Path(__file__).resolve().parent, "files/"+c)
+                        if os.path.exists(er_file):
+                            with open(er_file, "w") as f:
+                                f.write(status)
+                                f.close()
+                                f = open(er_file, "r")
+                                er: dict = json.load(f)
+                            return OpenC2RspFields(status=StatusCode.OK, results=er)
+                        else:
+                            return OpenC2RspFields(status=StatusCode.NOT_FOUND, status_text="error performing er retrieval")
+                else:
+                    return OpenC2RspFields(status=StatusCode.BAD_REQUEST,
+                                           status_text=f'account uid required')
 
-    pass
+            else:
+                return OpenC2RspFields(status=StatusCode.BAD_REQUEST,
+                                       status_text=f'account status required, got: '+status)
 
+        else:
+            return OpenC2RspFields(status=StatusCode.BAD_REQUEST,
+                                   status_text=f'account status required')
+        pass
+    else:
+        return OpenC2RspFields(status=StatusCode.BAD_REQUEST,
+                           status_text=f'account status required, found None')
 
 @er.pair('update', 'file', implemented=False)
 def update_file(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
