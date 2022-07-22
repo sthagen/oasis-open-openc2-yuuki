@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="https://github.com/oasis-open/openc2-yuuki/blob/endpoint_response/examples/actuators/files/Yuuki_Logo.png?raw=true" alt="Yuuki"/>
+  <img src="https://github.com/ScreamBun/openc2-yuuki/blob/endpoint_response/examples/actuators/files/Yuuki_Logo.png?raw=true" alt="Yuuki"/>
 </p>
 
 ## Introduction
