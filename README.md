@@ -13,14 +13,15 @@
 [Introduction](#introduction)  
 [Requirements and Setup](#requirements-and-setup)  
 [Yuuki's Consumer Components](#components-of-a-yuuki-consumer)  
-    [Consumers](#consumers)  
-    [Actuators](#actuators)  
-    [Serializations](#serializations)  
+    * [Consumers](#consumers)  
+    * [Actuators](#actuators)  
+    * [Serializations](#serializations)  
 [Example Consumers](#examples)  
 [Transport Functions](#transport-functions)  
-    [HTTP](#HTTP)  
-    [MQTT](#MQTT)  
-    [OpenDXL(experimental)](#opendxl)  
+    * [HTTP](#HTTP)  
+    * [MQTT](#MQTT)  
+    * [OpenDXL(experimental)](#opendxl)  
+[FAQ](#frequently-asked-questions)
     
 
 ## Introduction
