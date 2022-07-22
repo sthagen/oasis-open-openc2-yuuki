@@ -7,18 +7,20 @@
               / ______|____/|____/|__|_ \__|
               \/                       \/   
 ```        
-##Table of Contents
-[Introduction](#introduction)
-[Requirements and Setup](#Requirements and Setup)
-[Yuuki's Consumer Components](#Components of a Yuuki Consumer)
-    [Consumers](#consumers)
-    [Actuators](#actuators)
-    [Serializations](#serializations)
-[Example Consumers](#examples)
-[Transport Functions](#transport functions)
-    [HTTP](#HTTP)
-    [MQTT](#MQTT)
-    [OpenDXL(experimental)](#opendxl)
+
+## Table of Contents  
+
+[Introduction](#introduction)  
+[Requirements and Setup](#requirements-and-setup)  
+[Yuuki's Consumer Components](#components-of-a-yuuki-consumer)  
+    [Consumers](#consumers)  
+    [Actuators](#actuators)  
+    [Serializations](#serializations)  
+[Example Consumers](#examples)  
+[Transport Functions](#transport-functions)  
+    [HTTP](#HTTP)  
+    [MQTT](#MQTT)  
+    [OpenDXL(experimental)](#opendxl)  
     
 
 ## Introduction
@@ -30,7 +32,7 @@ Yuuki is a framework for creating OpenC2 Consumers. It serves a few purposes:
 * Facilitate experimentation with different Actuator profiles, transfer protocols and message serializations
 
 The three main components of Yuuki are the [Consumer](consumers), [Actuator](#actuators), and [Serialization](#serializations) classes, 
-defined respectively in the consumer.py, actuator.py, and serialization.py files.
+defined respectively in the `consumer.py`, `actuator.py`, and `serialization.py` files.
 
 ## Requirements and Setup
 * Python 3.8+  
@@ -67,7 +69,7 @@ or you can import them directly in the consumer itself, as shown in this example
 ```
 
 
-#Components of a Yuuki Consumer
+# Components of a Yuuki Consumer
 
 ## Consumers  
 
@@ -82,7 +84,7 @@ consumer = Consumer(rate_limit=60, versions=['1.0'], actuators=[], serialization
 The Consumer class’s main purpose is to deserialize and process OpenC2 Commands,   
 route the Command to the correct Actuator function from the Action-Target pair in the Command,  
 and then return a serialized OpenC2 Response based on the results of the Command (if applicable).   
-This is accomplished by calling the ‘process_command’ function.  
+This is accomplished by calling the `process_command` function.  
 
 ```python
 consumer.process_command(command, 'json')
@@ -100,7 +102,7 @@ consumer.create_response_msg(response_body=OpenC2RspFields(), encode='json')
 ```
 To extend Consumers to support additional Commands and methods of serializing methods, 
 the Actuator and Serialization classes are used. Instances of these classes can be provided as arguments to a consumer 
-when it is initialized, or can be added later using the ‘add_actuator_profile’ and ‘add_serialization’ methods.
+when it is initialized, or can be added later using the `add_actuator_profile` and `add_serialization` methods.
 
 
 ## Actuators
@@ -108,7 +110,7 @@ when it is initialized, or can be added later using the ‘add_actuator_profile�
 By default, the Consumer class only supports a single Command: `query features`.
 The set of Commands supported by the Consumer is extended with Actuators, which can be added to the Consumer either during or after its initialization.
 
-An Actuator is identified by a string representing the namespace identifier (nsid) of its Actuator profile.
+An Actuator is identified by a string representing the namespace identifier (`nsid`) of its Actuator profile.
 Actuators consist of a number of action- target pairs, and inherit from the Actuator class, 
 giving them access to initialization, pair definition and registration, and some basic error handling.
 
@@ -166,7 +168,7 @@ Serialization(name='json', deserialize=json.loads, serialize=json.dumps)
 An example Consumer utilizing different transport protocols, as well as sample Producer scripts have been provided in the `examples` directory.
 
 To demonstrate the OpenC2 Consumer, Yuuki can use its Transport functions to send messages as a basic OpenC2 Producer.
-However, if you have another method of sendo=ingOpenC2 Commands, Yuuki should work with them as well, with the proper connection info.
+However, if you have another method of sending OpenC2 Commands, Yuuki should work with them as well, with the proper connection info.  
 Each Producer sends an OpenC2 Command similar to the following:
 
 ```json
@@ -216,12 +218,12 @@ source venv/bin/activate
 
 ## Transport Functions
 
-Yuuki Consumer functions require it has OpenC2 to read. Transport functions are how that happens. 
-These are found under /openc2_arch/transports and have \_\_init__, config and transport functions. 
-These were not listed with the other core parts of Yuuki onl because they interact with its Consumer logic very little. 
-They are very important, but they deal with transporting serialized messages, not OpenC2 Commands.
-This is where your connection info is sent to properly establish connections.
-Tinker with caution!!!
+Yuuki's Consumer functions require it has OpenC2 to read. Transport functions are how that happens.  
+These are found under `/openc2_arch/transports` and have `__init__,` `config` and `transport` functions.  
+These were not listed with the other core parts of Yuuki only because they interact with its Consumer logic very little.  
+They are very important, but they deal with transporting serialized messages, not OpenC2 Commands.  
+This is where your connection info is sent to properly establish connections.  
+Tinker with caution!!!  
 
 ### HTTP
 
