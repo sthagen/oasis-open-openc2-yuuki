@@ -1,6 +1,10 @@
 
-<p align="center">
-  <img src="https://github.com/ScreamBun/openc2-yuuki/blob/endpoint_response/examples/actuators/files/Yuuki_Logo.png?raw=true" alt="Yuuki"/>
+<p>
+  <img src="https://github.com/ScreamBun/openc2-yuuki/blob/endpoint_response/examples/actuators/files/Yuuki_Logo.png?raw=true" alt="Yuuki" class="center">
+.center {display: block;
+margin-left: auto;
+margin-right: auto;
+width: 80%;}
 </p>
 
 ## Introduction
@@ -16,7 +20,7 @@ Yuuki is a framework for creating OpenC2 Consumers. It serves a few purposes:
 * Python 3.8+
 * Pip3
 * a Virtual Environments Package (venv in example)
-```sh
+
   -Create and work on a virtual environment you want to be running Yuuki:
     -mkdir yuuki
     -cd yuuki
@@ -33,7 +37,7 @@ Yuuki is a framework for creating OpenC2 Consumers. It serves a few purposes:
   -Finally, run an example consumer file: 
     -python3 examples/mqtt_consumer_full.py
 
-```
+
 
 
 ## Consumers
