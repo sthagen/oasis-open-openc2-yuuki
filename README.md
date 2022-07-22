@@ -1,4 +1,7 @@
-# Yuuki
+
+<p align="center">
+  <img src="https://github.com/oasis-open/openc2-yuuki/blob/endpoint_response/examples/actuators/files/Yuuki_Logo.png?raw=true" alt="Yuuki"/>
+</p>
 
 ## Introduction
 
@@ -14,21 +17,21 @@ Yuuki is a framework for creating OpenC2 Consumers. It serves a few purposes:
 * Pip3
 * a Virtual Environments Package (venv in example)
 ```sh
-    --Create and work on a virtual environment you want to be running Yuuki:
-mkdir yuuki
-cd yuuki
-python3 -m venv venv
-source venv/bin/activate
-    --Clone Yuuki Repository:
-git clone THIS_REPO
-    --Create Build folder: 
-python3 -m pip install -U -r requirements.txt
-    --Run setup.py for the branch you want:
-python3 setup.py <<branch>> 
-    --If you plan to use other tools with your actuator, install them:
-python3 -m pip install <<your tools>>
-    --Finally, run an example consumer file: 
-python3 examples/mqtt_consumer_full.py
+  -Create and work on a virtual environment you want to be running Yuuki:
+    -mkdir yuuki
+    -cd yuuki
+    -python3 -m venv venv
+    -source venv/bin/activate
+  -Clone Yuuki Repository:
+    -git clone **THIS_REPO**
+  -Create Build folder: 
+    -python3 -m pip install -U -r requirements.txt
+  -Run setup.py for the branch you want:
+    -python3 setup.py **branch**
+  -If you plan to use other tools with your actuator, install them:
+    -python3 -m pip install **your tools**
+  -Finally, run an example consumer file: 
+    -python3 examples/mqtt_consumer_full.py
 
 ```
 
