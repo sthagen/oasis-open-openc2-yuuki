@@ -1,11 +1,13 @@
 
-<p>
-  <img src="https://github.com/ScreamBun/openc2-yuuki/blob/endpoint_response/examples/actuators/files/Yuuki_Logo.png?raw=true" alt="Yuuki" class="center">
-.center {display: block;
-margin-left: auto;
-margin-right: auto;
-width: 80%;}
-</p>
+```
+             _____.___.            __   .__ 
+             \__  |   |__ __ __ __|  | _|__|
+              /   |   |  |  \  |  \  |/ /  |
+              \____   |  |  /  |  /    <|  |
+              / ______|____/|____/|__|_ \__|
+              \/                       \/   
+```        
+
 
 ## Introduction
 
