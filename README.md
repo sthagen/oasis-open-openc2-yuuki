@@ -10,15 +10,27 @@ Yuuki is a framework for creating OpenC2 Consumers. It serves a few purposes:
 
 
 ## Requirements and Setup
-* Python 3.6+
+* Python 3.8+
 * Pip3
-* a Virtual Environments Package
+* a Virtual Environments Package (venv in example)
+```sh
+    --Create and work on a virtual environment you want to be running Yuuki:
+mkdir yuuki
+cd yuuki
+python3 -m venv venv
+source venv/bin/activate
+    --Clone Yuuki Repository:
+git clone THIS_REPO
+    --Create Build folder: 
+python3 -m pip install -U -r requirements.txt
+    --Run setup.py for the branch you want:
+python3 setup.py <<branch>> 
+    --If you plan to use other tools with your actuator, install them:
+python3 -m pip install <<your tools>>
+    --Finally, run an example consumer file: 
+python3 examples/mqtt_consumer_full.py
 
-    Create and work on a virtual environment you want to be running Yuuki
-    Create Build folder: python3 -m pip install -U -r requirements.txt
-    Run setup.py for the branch you want: python3 setup.py develop
-    If you plan to use other tools with your actuator, install them
-    Finally, run an example consumer file: python3 examples/mqtt_consumer_full.py
+```
 
 
 ## Consumers
@@ -26,7 +38,7 @@ Yuuki is a framework for creating OpenC2 Consumers. It serves a few purposes:
 A Consumer is initialized with a rate limit and a list of OpenC2 language versions that it supports, as well as an optional list of [Actuators](#actuators) and an optional list of [Serializations](#serializations).
 
 ```python
-from yuuki import Consumer
+from oc2_arch import Consumer
 
 consumer = Consumer(rate_limit=60, versions=['1.0'], actuators=[], serializations=[])
 ```
@@ -40,7 +52,7 @@ consumer.process_command(command, 'json')
 The Consumer also provides a method to create a serialized Response message without processing a Command.
 
 ```python
-from yuuki import OpenC2RspFields
+from oc2_arch import OpenC2RspFields
 
 consumer.create_response_msg(response_body=OpenC2RspFields(), encode='json')
 ```
@@ -69,7 +81,7 @@ These functions should have an `OpenC2CmdFields` object as their only parameter 
 The `pair` decorator is used to indicate to the Actuator which Command a function is intended to support.
 
 ```python
-from yuuki import OpenC2CmdFields, OpenC2RspFields, StatusCode
+from oc2_arch import OpenC2CmdFields, OpenC2RspFields, StatusCode
 
 @example.pair('action', 'target')
 def example_command(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
@@ -91,23 +103,9 @@ Serialization objects are used to add support for different methods of decoding 
 They are initialized with three arguments: the string that will be used to identify the protocol in OpenC2 Messages, a function for decoding messages, and a function for encoding messages. The Consumer class comes with support for JSON.
 ```python
 import json
-from yuuki import Serialization
+from oc2_arch import Serialization
 
 Serialization(name='json', deserialize=json.loads, serialize=json.dumps)
-```
-
-
-## Installation
-
-Using Python3.8+, install with venv and pip:
-```sh
-mkdir yuuki
-cd yuuki
-python3 -m venv venv
-source venv/bin/activate
-git clone THIS_REPO
-pip install -U -r requirements.txt 
-python3 setup.py <<branch>> 
 ```
 
 
