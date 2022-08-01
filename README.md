@@ -139,9 +139,9 @@ def example_command(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
     return OpenC2RspFields(status=StatusCode.OK)
 ```
 
-Functions for Commands that are specified in the Actuator profile, but not implemented by the Actuator should set the `implemented` argument to `False`, and provide a desired response message..
-For example, if you are implementing an ipv6 packet filter, which does not have ipv4 functions, but you want to send proper notifications,
-changing the implementation of these to False should provide the proper "Command Not Implemented" as opposed to "Actuator Not Found".
+Functions for Commands that are specified in the Actuator profile, but not implemented by the Actuator should set the `implemented` argument to `False`, and provide a desired response message.  
+For example, if you are implementing an IPv6 packet filter, which does not have IPv4 functions, but you want to send proper notifications,
+changing the implementation of these to False should provide the proper `Unimplemented Command` as opposed to `Actuator Not Found`.
 ```python
 @example.pair('action', 'target', implemented=False)
 def unsupported_command(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
@@ -152,9 +152,9 @@ def unsupported_command(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
 
 ### Serializations
 
-Serialization objects are used to add support for different methods of decoding and encoding messages to the Consumer.
-They are initialized with three arguments: the string that will be used to identify the protocol in OpenC2 Messages, 
-a function for decoding messages, and a function for encoding messages. 
+Serialization objects add support for different message encoding and decoding methods to the Consumer.  
+They are initialized with three arguments: a string to identify the protocol in OpenC2 Messages,  
+a function for encoding messages, and a function for decoding messages.  
 The Consumer class comes with support for JSON.
 ```python
 import json
@@ -166,7 +166,7 @@ Serialization(name='json', deserialize=json.loads, serialize=json.dumps)
 
 ## Examples
 
-An example Consumer utilizing different transport protocols, as well as sample Producer scripts have been provided in the `examples` directory.
+An example Consumer utilizing different transport protocols, as well as sample Producer scripts are provided in the `examples` directory.
 
 To demonstrate the OpenC2 Consumer, Yuuki can use its Transport functions to send messages as a basic OpenC2 Producer.
 However, if you have another method of sending OpenC2 Commands, Yuuki should work with them as well, with the proper connection info.  
@@ -224,19 +224,7 @@ These are found under `/openc2_arch/transports` and have `__init__,` `config` an
 These were not listed with the other core parts of Yuuki only because they interact with its Consumer logic very little.  
 They are very important, but they deal with transporting serialized messages, not OpenC2 Commands.  
 This is where your connection info is sent to properly establish connections.  
-Tinker with caution!!!  
-
-### HTTP
-
-#### Start Consumer:
-```sh
-python examples/http_example.py
-```
-
-#### Publish an OpenC2 Command:
-```sh
-python examples/producers/http_producer.py
-```
+Tinker with caution!  
 
 ### MQTT
 A connection to an MQTT broker is required. A publicly available MQTT broker is hosted at [test.mosquitto.org](https://test.mosquitto.org).
@@ -249,6 +237,18 @@ python examples/mqtt_example_full.py --host test.mosquitto.org
 #### Publish an OpenC2 Command:
 ```sh
 python producers/mqtt_producer.py --host test.mosquitto.org
+```
+
+### HTTP
+
+#### Start Consumer:
+```sh
+python examples/http_example.py
+```
+
+#### Publish an OpenC2 Command:
+```sh
+python examples/producers/http_producer.py
 ```
 
 ### OpenDXL
@@ -280,7 +280,7 @@ enabling interoperability across a range of cyber security tools and application
 Learn more about OpenC2 at their website, [openc2.org](https://openc2.org/)
 
 #### Who is "In Charge" of Yuuki?
-[OASIS open Projects](https://www.oasis-open.org/open-projects/) operate independently under lightweight rules, 
+[OASIS Open Projects](https://www.oasis-open.org/open-projects/) operate independently under lightweight rules, 
 are funded by sponsorship by organizations committed to the project's success, and are coordinated and managed by OASIS.
 
 #### Where can I find Actuators?

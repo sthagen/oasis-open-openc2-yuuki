@@ -110,19 +110,21 @@ class Consumer:
                 openc2_rsp = OpenC2RspFields(status=StatusCode.NOT_FOUND, status_text='No matching Actuator found')
                 return self.create_response_msg(openc2_rsp, headers=openc2_msg.headers, encode=encode)
 
-        if openc2_msg.body.openc2.request.args and openc2_msg.body.openc2.request.args.response_requested:
-            response_requested = openc2_msg.body.openc2.request.args.response_requested
-            if response_requested == 'none':
-                self.executor.submit(actuator_callable)
-                return None
-            elif response_requested == 'ack':
-                self.executor.submit(actuator_callable)
-                return self.create_response_msg(OpenC2RspFields(status=StatusCode.PROCESSING),
-                                                headers=openc2_msg.headers, encode=encode)
-            elif response_requested == 'status':
-                pass
-            elif response_requested == 'complete':
-                pass
+        if openc2_msg.body.openc2.request.args:
+            if response_requested := getattr(openc2_msg.body.openc2.request.args, "response_requested", 'complete'):
+                if response_requested == 'none':
+                    self.executor.submit(actuator_callable)
+                    return None
+                elif response_requested == 'ack':
+                    self.executor.submit(actuator_callable)
+                    return self.create_response_msg(OpenC2RspFields(status=StatusCode.PROCESSING),
+                                                    headers=openc2_msg.headers, encode=encode)
+                elif response_requested == 'status':
+                    pass
+                elif response_requested == 'complete':
+                    pass
+        else:
+            pass
 
         try:
             openc2_rsp = actuator_callable()

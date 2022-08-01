@@ -42,6 +42,27 @@ query_features = {
     }
 }
 
+query_features_silent = {
+    "headers": {
+        "request_id": str(uuid.uuid4()),
+        "created": round(time.time() * 1000),
+        "from": "Producer1"
+    },
+    "body": {
+        "openc2": {
+            "request": {
+                "action": "query",
+                "target": {
+                    "features": ["profiles"]
+                },
+                "args": {
+                    "response_requested" : "none"
+                }
+            }
+        }
+    }
+}
+
 
 query_sbom = {
     "headers": {
@@ -123,7 +144,8 @@ set_account_status_enabled = {
                         }
                 },
                 "args": {
-                    "account_status" : "enabled"
+                    "account_status" : "enabled",
+                    "response_requested": "status"
                 },
                 "actuator": {
                     "er": {}
