@@ -26,7 +26,10 @@
 
 ## Introduction
 
-Yuuki is a framework for creating OpenC2 Consumers. It serves a few purposes:
+Open Command and Control, or OpenC2, is a standardized language for the command and control of technologies that provide or support cyber defenses.
+OpenC2 Commands are sent by Producer devices to Consumers that receive and implement Commands.  
+OpenC2 is defined in the [OpenC2 Architecture Specification](https://docs.oasis-open.org/openc2/oc2arch/v1.0/csd02/oc2arch-v1.0-csd02.md) and [OpenC2 Language Specification](https://github.com/oasis-tcs/openc2-oc2ls/blob/published/oc2ls-v1.0-cs02.md)
+Yuuki is a tool for creating OpenC2 Consumers. It serves a few purposes:
 
 * Provide an introduction to OpenC2
 * Provide an OpenC2 Consumer for OpenC2 Producers to test against
@@ -36,8 +39,8 @@ The three main components of Yuuki are the [Consumer](consumers), [Actuator](#ac
 defined respectively in the `consumer.py`, `actuator.py`, and `serialization.py` files.
 
 ## Requirements and Setup
-* Python 3.8+  
-* Pip3  
+* [Python 3.8+](https://www.python.org/downloads/)   
+* [Pip3](https://pip.pypa.io/en/stable/) - Package Installer for Python
 * a Virtual Environments Package (venv in example)  
   
 -Create and work on a virtual environment you want to be running Yuuki:  
@@ -74,7 +77,11 @@ or you can import them directly in the consumer itself, as shown in this example
 
 ### Consumers  
 
-A Consumer is initialized with a rate limit and a list of OpenC2 language versions that it supports, as well as an optional list of [Actuators](#actuators) and an optional list of [Serializations](#serializations).
+A Consumer is initialized with a rate limit and a list of OpenC2 language versions that it supports,  
+as well as an optional list of [Actuators](#actuators) and an optional list of [Serializations](#serializations).
+Although more complicated than adding them on initialization, Actuators and Serializations may be added later using the Command Line Interface.  
+Being focused on cyber defense, Yuuki Consumers have a rate limit that caps the maximum amount of commands they can receive in a minute.
+This helps protect against network overload, recursion errors, or other unforseen issues. 
 
 ```python
 from oc2_arch import Consumer
@@ -227,6 +234,7 @@ This is where your connection info is sent to properly establish connections.
 Tinker with caution!  
 
 ### MQTT
+You can find the OpenC2 MQTT Transfer Specification [Here](https://github.com/oasis-tcs/openc2-transf-mqtt/blob/published/transf-mqtt-v1.0-cs01.md).
 A connection to an MQTT broker is required. A publicly available MQTT broker is hosted at [test.mosquitto.org](https://test.mosquitto.org).
 
 #### Start Consumer:
@@ -240,6 +248,7 @@ python producers/mqtt_producer.py --host test.mosquitto.org
 ```
 
 ### HTTP
+You can find the OpenC2 HTTPS Transfer Specification [Here](https://github.com/oasis-tcs/openc2-impl-https/blob/published/open-impl-https-v1.1-cs01.md)
 
 #### Start Consumer:
 ```sh
