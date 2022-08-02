@@ -1,14 +1,8 @@
 
-```
-             _____.___.            __   .__ 
-             \__  |   |__ __ __ __|  | _|__|
-              /   |   |  |  \  |  \  |/ /  |
-              \____   |  |  /  |  /    <|  |
-              / ______|____/|____/|__|_ \__|
-              \/                       \/   
-```        
+![Yuuki]https://github.com/ScreamBun/openc2-yuuki/blob/endpoint_response/Y.png)
+#Yuuki
 
-# Table of Contents  
+##Table of Contents  
 
 [Introduction](#introduction)  
 [Requirements and Setup](#requirements-and-setup)  
@@ -25,15 +19,16 @@
     
 
 ## Introduction
-
+Yuuki is a tool for creating OpenC2 Consumers.
 Open Command and Control, or OpenC2, is a standardized language for the command and control of technologies that provide or support cyber defenses.
 OpenC2 Commands are sent by Producer devices to Consumers that receive and implement Commands.  
 OpenC2 is defined in the [OpenC2 Architecture Specification](https://docs.oasis-open.org/openc2/oc2arch/v1.0/csd02/oc2arch-v1.0-csd02.md) and [OpenC2 Language Specification](https://github.com/oasis-tcs/openc2-oc2ls/blob/published/oc2ls-v1.0-cs02.md)
-Yuuki is a tool for creating OpenC2 Consumers. It serves a few purposes:
+Yuuki serves a few purposes:
 
 * Provide an introduction to OpenC2
-* Provide an OpenC2 Consumer for OpenC2 Producers to test against
 * Facilitate experimentation with different Actuator profiles, transfer protocols and message serializations
+* Provide an OpenC2 Consumer for OpenC2 Producers to test against
+
 
 The three main components of Yuuki are the [Consumer](consumers), [Actuator](#actuators), and [Serialization](#serializations) classes, 
 defined respectively in the `consumer.py`, `actuator.py`, and `serialization.py` files.
@@ -43,30 +38,30 @@ defined respectively in the `consumer.py`, `actuator.py`, and `serialization.py`
 * [Pip3](https://pip.pypa.io/en/stable/) - Package Installer for Python
 * a Virtual Environments Package (venv in example)  
   
--Create and work on a virtual environment you want to be running Yuuki:  
+Create and work on a virtual environment you want to be running Yuuki:  
 ```
     mkdir yuuki  
     cd yuuki  
     python3 -m venv venv  
     source venv/bin/activate  
 ```
--Clone Yuuki Repository:  
+Clone Yuuki Repository:  
 ```
     -git clone **THIS_REPO**  
 ```
--Create Build folder:   
+Create Build folder:   
 ```
     -python3 -m pip install -U -r requirements.txt  
 ```    
--Run setup.py for the branch you want:
+Run setup.py for the branch you want:
 ```
     -python3 setup.py **branch**  
 ```
--If you plan to use other tools with your actuator, install them:  
+If you plan to use other tools with your actuator, install them:  
 ```
     -python3 -m pip install **your tools**  
 ```
--Finally, run an example consumer file. this can be generic and you can add actuators through the command line, 
+Finally, run an example consumer file. this can be generic and you can add actuators through the command line, 
 or you can import them directly in the consumer itself, as shown in this example:   
 ```
     -python3 examples/mqtt_consumer_full.py  
@@ -109,7 +104,7 @@ from oc2_arch import OpenC2RspFields
 consumer.create_response_msg(response_body=OpenC2RspFields(), encode='json')
 ```
 To extend Consumers to support additional Commands and methods of serializing methods, 
-the Actuator and Serialization classes are used. Instances of these classes can be provided as arguments to a consumer 
+the Actuator and Serialization classes are used. Instances of these classes can be provided as arguments to a Consumer 
 when it is initialized, or can be added later using the `add_actuator_profile` and `add_serialization` methods.
 
 
@@ -136,7 +131,9 @@ example = Actuator(nsid='x-example')
 After an Actuator is initialized, functions that correspond to Commands that the Actuator supports can also be added to it.
 These functions should have an `OpenC2CmdFields` object as their only parameter and return an `OpenC2RspFields` object.
 
-The `pair` decorator is used to indicate to the Actuator which Command a function is intended to support.
+The `pair` decorator is used to indicate to the Actuator which Command a function is intended to support.  
+Pairs consist of an action and a target the actuator will read from the OpenC2 Command, as well as logic for what actions to perform and OpenC2 Response to generate.  
+
 
 ```python
 from oc2_arch import OpenC2CmdFields, OpenC2RspFields, StatusCode
