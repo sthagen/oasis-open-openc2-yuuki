@@ -2,7 +2,7 @@
 
 # Yuuki  
   
-![Yuuki](Y.png)  
+![Yuuki]([<img src="Y.png" width="250"/>](Y.png))  
   
 ## Table of Contents  
 
