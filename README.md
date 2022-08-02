@@ -1,14 +1,10 @@
 
-```
-             _____.___.            __   .__ 
-             \__  |   |__ __ __ __|  | _|__|
-              /   |   |  |  \  |  \  |/ /  |
-              \____   |  |  /  |  /    <|  |
-              / ______|____/|____/|__|_ \__|
-              \/                       \/   
-```        
 
-# Table of Contents     
+# Yuuki  
+  
+![Yuuki](Y.png)  
+  
+## Table of Contents  
 
 [Introduction](#introduction)  
 [Requirements and Setup](#requirements-and-setup)  
@@ -25,45 +21,48 @@
     
 
 ## Introduction
-
-Yuuki is a framework for creating OpenC2 Consumers. It serves a few purposes:
+Yuuki is a tool for creating OpenC2 Consumers.
+Open Command and Control, or OpenC2, is a standardized language for the command and control of technologies that provide or support cyber defenses.
+OpenC2 Commands are sent by Producer devices to Consumers that receive and implement Commands.  
+OpenC2 is defined in the [OpenC2 Architecture Specification](https://docs.oasis-open.org/openc2/oc2arch/v1.0/csd02/oc2arch-v1.0-csd02.md) and [OpenC2 Language Specification](https://github.com/oasis-tcs/openc2-oc2ls/blob/published/oc2ls-v1.0-cs02.md)
+Yuuki serves a few purposes:
 
 * Provide an introduction to OpenC2
-* Provide an OpenC2 Consumer for OpenC2 Producers to test against
 * Facilitate experimentation with different Actuator profiles, transfer protocols and message serializations
+* Provide an OpenC2 Consumer for OpenC2 Producers to test against
 
 The three main components of Yuuki are the [Consumer](consumers), [Actuator](#actuators), and [Serialization](#serializations) classes, 
 defined respectively in the `consumer.py`, `actuator.py`, and `serialization.py` files.
 
 ## Requirements and Setup
-* Python 3.8+  
-* Pip3  
+* [Python 3.8+](https://www.python.org/downloads/)   
+* [Pip3](https://pip.pypa.io/en/stable/) - Package Installer for Python
 * a Virtual Environments Package (venv in example)  
   
--Create and work on a virtual environment you want to be running Yuuki:  
+Create and work on a virtual environment you want to be running Yuuki:  
 ```
     mkdir yuuki  
     cd yuuki  
     python3 -m venv venv  
     source venv/bin/activate  
 ```
--Clone Yuuki Repository:  
+Clone Yuuki Repository:  
 ```
     -git clone **THIS_REPO**  
 ```
--Create Build folder:   
+Create Build folder:   
 ```
     -python3 -m pip install -U -r requirements.txt  
 ```    
--Run setup.py for the branch you want:
+Run setup.py for the branch you want:
 ```
     -python3 setup.py **branch**  
 ```
--If you plan to use other tools with your actuator, install them:  
+If you plan to use other tools with your actuator, install them:  
 ```
     -python3 -m pip install **your tools**  
 ```
--Finally, run an example consumer file. this can be generic and you can add actuators through the command line, 
+Finally, run an example consumer file. this can be generic and you can add actuators through the command line, 
 or you can import them directly in the consumer itself, as shown in this example:   
 ```
     -python3 examples/mqtt_consumer_full.py  
@@ -74,7 +73,11 @@ or you can import them directly in the consumer itself, as shown in this example
 
 ### Consumers  
 
-A Consumer is initialized with a rate limit and a list of OpenC2 language versions that it supports, as well as an optional list of [Actuators](#actuators) and an optional list of [Serializations](#serializations).
+A Consumer is initialized with a rate limit and a list of OpenC2 language versions that it supports,  
+as well as an optional list of [Actuators](#actuators) and an optional list of [Serializations](#serializations).
+Although more complicated than adding them on initialization, Actuators and Serializations may be added later using the Command Line Interface.  
+Being focused on cyber defense, Yuuki Consumers have a rate limit that caps the maximum amount of commands they can receive in a minute.
+This helps protect against network overload, recursion errors, or other unforseen issues. 
 
 ```python
 from oc2_arch import Consumer
@@ -101,8 +104,9 @@ from oc2_arch import OpenC2RspFields
 
 consumer.create_response_msg(response_body=OpenC2RspFields(), encode='json')
 ```
-To extend Consumers to support additional Commands and methods of serializing methods, 
-the Actuator and Serialization classes are used. Instances of these classes can be provided as arguments to a consumer 
+To extend Consumers to support additional Commands and methods of serializing methods,
+the Actuator and Serialization classes are used. Instances of these classes can be provided as arguments to a Consumer 
+>>>>>>> endpoint_response
 when it is initialized, or can be added later using the `add_actuator_profile` and `add_serialization` methods.
 
 
@@ -129,7 +133,8 @@ example = Actuator(nsid='x-example')
 After an Actuator is initialized, functions that correspond to Commands that the Actuator supports can also be added to it.
 These functions should have an `OpenC2CmdFields` object as their only parameter and return an `OpenC2RspFields` object.
 
-The `pair` decorator is used to indicate to the Actuator which Command a function is intended to support.
+The `pair` decorator is used to indicate to the Actuator which Command a function is intended to support.  
+Pairs consist of an action and a target the actuator will read from the OpenC2 Command, as well as logic for what actions to perform and OpenC2 Response to generate.
 
 ```python
 from oc2_arch import OpenC2CmdFields, OpenC2RspFields, StatusCode
@@ -139,9 +144,10 @@ def example_command(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
     return OpenC2RspFields(status=StatusCode.OK)
 ```
 
-Functions for Commands that are specified in the Actuator profile, but not implemented by the Actuator should set the `implemented` argument to `False`, and provide a desired response message..
-For example, if you are implementing an ipv6 packet filter, which does not have ipv4 functions, but you want to send proper notifications,
-changing the implementation of these to False should provide the proper "Command Not Implemented" as opposed to "Actuator Not Found".
+Functions for Commands that are specified in the Actuator profile, but not implemented by the Actuator should set the `implemented` argument to `False`, and provide a desired response message.  
+For example, if you are implementing an IPv6 packet filter, which does not have IPv4 functions, but you want to send proper notifications,
+changing the implementation of these to False should provide the proper `Unimplemented Command` as opposed to `Actuator Not Found`.
+
 ```python
 @example.pair('action', 'target', implemented=False)
 def unsupported_command(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
@@ -152,9 +158,10 @@ def unsupported_command(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
 
 ### Serializations
 
-Serialization objects are used to add support for different methods of decoding and encoding messages to the Consumer.
-They are initialized with three arguments: the string that will be used to identify the protocol in OpenC2 Messages, 
-a function for decoding messages, and a function for encoding messages. 
+Serialization objects add support for different message encoding and decoding methods to the Consumer.  
+They are initialized with three arguments: a string to identify the protocol in OpenC2 Messages,  
+a function for encoding messages, and a function for decoding messages.  
+>>>>>>> endpoint_response
 The Consumer class comes with support for JSON.
 ```python
 import json
@@ -166,7 +173,7 @@ Serialization(name='json', deserialize=json.loads, serialize=json.dumps)
 
 ## Examples
 
-An example Consumer utilizing different transport protocols, as well as sample Producer scripts have been provided in the `examples` directory.
+An example Consumer utilizing different transport protocols, as well as sample Producer scripts are provided in the `examples` directory.
 
 To demonstrate the OpenC2 Consumer, Yuuki can use its Transport functions to send messages as a basic OpenC2 Producer.
 However, if you have another method of sending OpenC2 Commands, Yuuki should work with them as well, with the proper connection info.  
@@ -223,22 +230,11 @@ Yuuki's Consumer functions require it has OpenC2 to read. Transport functions ar
 These are found under `/openc2_arch/transports` and have `__init__,` `config` and `transport` functions.  
 These were not listed with the other core parts of Yuuki only because they interact with its Consumer logic very little.  
 They are very important, but they deal with transporting serialized messages, not OpenC2 Commands.  
-This is where your connection info is sent to properly establish connections.  
-Tinker with caution!!!  
-
-### HTTP
-
-#### Start Consumer:
-```sh
-python examples/http_example.py
-```
-
-#### Publish an OpenC2 Command:
-```sh
-python examples/producers/http_producer.py
-```
+This is where your connection info is sent to properly establish connections.
+Tinker with caution!  
 
 ### MQTT
+You can find the OpenC2 MQTT Transfer Specification [Here](https://github.com/oasis-tcs/openc2-transf-mqtt/blob/published/transf-mqtt-v1.0-cs01.md).
 A connection to an MQTT broker is required. A publicly available MQTT broker is hosted at [test.mosquitto.org](https://test.mosquitto.org).
 
 #### Start Consumer:
@@ -251,6 +247,20 @@ python examples/mqtt_example_full.py --host test.mosquitto.org
 python producers/mqtt_producer.py --host test.mosquitto.org
 ```
 
+### HTTP
+You can find the OpenC2 HTTPS Transfer Specification [Here](https://github.com/oasis-tcs/openc2-impl-https/blob/published/open-impl-https-v1.1-cs01.md)
+
+#### Start Consumer:
+```sh
+python examples/http_example.py
+```
+
+#### Publish an OpenC2 Command:
+```sh
+python examples/producers/http_producer.py
+```
+
+>>>>>>> endpoint_response
 ### OpenDXL
 
 | :warning:        | *Support for OpenDXL is experimental*|
@@ -280,7 +290,8 @@ enabling interoperability across a range of cyber security tools and application
 Learn more about OpenC2 at their website, [openc2.org](https://openc2.org/)
 
 #### Who is "In Charge" of Yuuki?
-[OASIS open Projects](https://www.oasis-open.org/open-projects/) operate independently under lightweight rules, 
+
+[OASIS Open Projects](https://www.oasis-open.org/open-projects/) operate independently under lightweight rules,
 are funded by sponsorship by organizations committed to the project's success, and are coordinated and managed by OASIS.
 
 #### Where can I find Actuators?

@@ -4,7 +4,7 @@ https://docs.oasis-open.org/openc2/oc2ls/v1.0/oc2ls-v1.0.html
 
 For validating and parsing OpenC2 Messages
 """
-from typing import Optional, Dict, Any, Literal
+from typing import Optional, Dict, Any, Literal, Union
 from pydantic import BaseModel, Extra, validator, root_validator
 
 
@@ -30,13 +30,13 @@ class OpenC2CmdArgs(BaseModel, extra=Extra.allow):
             raise ValueError('Can have at most two of [start_time, stop_time, duration]')
         return args
 
-    @root_validator
-    def check_extra_args(cls, args):
-        for arg, value in args.items():
-            if arg not in ('start_time', 'stop_time', 'duration', 'response_requested'):
-                if type(value) is not dict:
-                    raise ValueError('Value of extra arguments must be a dictionary')
-        return args
+    #@root_validator     ---removed for args issuesKC
+    #def check_extra_args(cls, args):
+      #  for arg, value in args.items():
+       #     if arg not in ('start_time', 'stop_time', 'duration', 'response_requested'):
+       #         if type(value) is not dict:
+        #            raise ValueError('Value of extra arguments must be a dictionary')
+        #return args
 
 
 class OpenC2CmdFields(BaseModel, extra=Extra.forbid):
@@ -45,7 +45,7 @@ class OpenC2CmdFields(BaseModel, extra=Extra.forbid):
     """
     action: str
     target: Dict[str, Any]
-    args: Optional[OpenC2CmdArgs]
+    args: Optional[Union[OpenC2CmdArgs, Dict[str, Any]]]
     actuator: Optional[Dict[str, Dict[str, Any]]]
     command_id: Optional[str]
 

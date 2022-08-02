@@ -14,7 +14,7 @@ parser.add_argument("--host", help="MQTT Broker host")
 parser.add_argument("--port", type=int, help="MQTT Broker port")
 args = parser.parse_args()
 
-host = args.host if args.host is not None else "127.0.0.1"
+host = args.host if args.host is not None else "35.221.11.97"
 port = args.port if args.port is not None else 1883
 
 oc2_properties = Properties(PacketTypes.PUBLISH)
@@ -29,6 +29,10 @@ def on_message(client, userdata, msg):
 
 
 mqtt_client = mqtt.Client(protocol=mqtt.MQTTv5)
+mqtt_client.username_pw_set(
+    username='USER',
+    password='PASSWORD'
+)
 mqtt_client.on_message = on_message
 mqtt_client.connect(host=host, port=port, keepalive=60, clean_start=False)
 mqtt_client.subscribe(topic="oc2/rsp",
