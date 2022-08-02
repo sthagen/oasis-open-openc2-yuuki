@@ -1,9 +1,9 @@
 
-![Yuuki]https://github.com/ScreamBun/openc2-yuuki/blob/endpoint_response/Y.png)
+![Yuuki](https://github.com/ScreamBun/openc2-yuuki/blob/endpoint_response/Y.png)  
 #Yuuki
-
+    
 ##Table of Contents  
-
+  
 [Introduction](#introduction)  
 [Requirements and Setup](#requirements-and-setup)  
 [Yuuki's Consumer Components](#components-of-a-yuuki-consumer)  
