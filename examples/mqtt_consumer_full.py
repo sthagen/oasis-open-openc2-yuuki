@@ -14,7 +14,7 @@ from actuators.slpf import slpf
 
 consumer = Consumer(rate_limit=60, versions=['1.0'], actuators=[slpf])
 
-host = '35.221.11.97'
+host = "127.0.0.1"
 port = 1883
 topics = ['oc2/cmd', 'oc2/cmd/ap/slpf', 'oc2/cmd/ap/database', 'oc2/cmd/ap/sbom']
 

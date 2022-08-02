@@ -14,7 +14,7 @@ parser.add_argument("--host", help="MQTT Broker host")
 parser.add_argument("--port", type=int, help="MQTT Broker port")
 args = parser.parse_args()
 
-host = args.host if args.host is not None else "35.221.11.97"
+host = args.host if args.host is not None else "127.0.0.1"
 port = args.port if args.port is not None else 1883
 
 oc2_properties = Properties(PacketTypes.PUBLISH)
