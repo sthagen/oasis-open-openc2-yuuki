@@ -105,8 +105,7 @@ from oc2_arch import OpenC2RspFields
 consumer.create_response_msg(response_body=OpenC2RspFields(), encode='json')
 ```
 To extend Consumers to support additional Commands and methods of serializing methods,
-the Actuator and Serialization classes are used. Instances of these classes can be provided as arguments to a Consumer 
->>>>>>> endpoint_response
+the Actuator and Serialization classes are used. Instances of these classes can be provided as arguments to a Consumer
 when it is initialized, or can be added later using the `add_actuator_profile` and `add_serialization` methods.
 
 
@@ -160,9 +159,9 @@ def unsupported_command(oc2_cmd: OpenC2CmdFields) -> OpenC2RspFields:
 
 Serialization objects add support for different message encoding and decoding methods to the Consumer.  
 They are initialized with three arguments: a string to identify the protocol in OpenC2 Messages,  
-a function for encoding messages, and a function for decoding messages.  
->>>>>>> endpoint_response
+a function for encoding messages, and a function for decoding messages.
 The Consumer class comes with support for JSON.
+
 ```python
 import json
 from oc2_arch import Serialization
@@ -234,10 +233,12 @@ This is where your connection info is sent to properly establish connections.
 Tinker with caution!  
 
 ### MQTT
+
 You can find the OpenC2 MQTT Transfer Specification [Here](https://github.com/oasis-tcs/openc2-transf-mqtt/blob/published/transf-mqtt-v1.0-cs01.md).
 A connection to an MQTT broker is required. A publicly available MQTT broker is hosted at [test.mosquitto.org](https://test.mosquitto.org).
 
 #### Start Consumer:
+
 ```sh
 python examples/mqtt_example_full.py --host test.mosquitto.org
 ```
@@ -251,16 +252,18 @@ python producers/mqtt_producer.py --host test.mosquitto.org
 You can find the OpenC2 HTTPS Transfer Specification [Here](https://github.com/oasis-tcs/openc2-impl-https/blob/published/open-impl-https-v1.1-cs01.md)
 
 #### Start Consumer:
+
 ```sh
 python examples/http_example.py
 ```
 
 #### Publish an OpenC2 Command:
+
 ```sh
 python examples/producers/http_producer.py
 ```
 
->>>>>>> endpoint_response
+
 ### OpenDXL
 
 | :warning:        | *Support for OpenDXL is experimental*|
@@ -279,27 +282,30 @@ python examples/opendxl_example.py PATH_TO_OPENDXL_CONFIG
 ```sh
 python examples/producers/opendxl_producer.py PATH_TO_OPENDXL_CONFIG
 ```
-
+  
 ## Frequently Asked Questions:
-
-#### What is OpenC2?
+  
+#### What is OpenC2?  
+  
 Open Command and Control, or OpenC2, is an OASIS Technical Committee Specification. 
 OpenC2 is a standardized language for the command and control of technologies that provide or support cyber defenses. 
 By providing a common language for machine-to-machine communication, OpenC2 is vendor and application agnostic, 
 enabling interoperability across a range of cyber security tools and applications.
 Learn more about OpenC2 at their website, [openc2.org](https://openc2.org/)
-
-#### Who is "In Charge" of Yuuki?
-
+  
+#### Who is "In Charge" of Yuuki?  
+  
 [OASIS Open Projects](https://www.oasis-open.org/open-projects/) operate independently under lightweight rules,
 are funded by sponsorship by organizations committed to the project's success, and are coordinated and managed by OASIS.
-
-#### Where can I find Actuators?
+  
+#### Where can I find Actuators?  
+  
 Example Implementations of OASIS approved Actuator Profiles will be provided in the Examples folder. 
 Other functions may be in the works, or used for demo purposes, and these do not generally end up on OASIS Main 
 until they are fully vetted and polished. However, if you want to see what we're cooking up, feel free to [take a look](https://github.com/ScreamBun/openc2-yuuki/tree/develop)
-
-#### Can I make my own Actuators for Yuuki?
+  
+#### Can I make my own Actuators for Yuuki?  
+  
 Yes! Yuuki is an Open Project, and while OASIS requires contributors to 
 read and agree to their Contributor Licensing Agreement, absolutely anyone can pull down
 and play around with the code. You can have Yuuki perform officially approved 
