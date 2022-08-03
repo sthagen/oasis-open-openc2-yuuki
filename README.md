@@ -2,7 +2,7 @@
 
 # Yuuki  
 
-[<img src="Y.png" width="50%"/>](snow_yuuki.jpg)  
+[<img src="snow_yuuki.jpg" alt="Yuuki" style="width: 50%; height: 50%"/>](snow_yuuki.jpg)  
   
 ## Table of Contents  
 
