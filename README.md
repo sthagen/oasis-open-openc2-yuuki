@@ -2,7 +2,7 @@
 
 # Yuuki  
   
-![Yuuki](Y.png)  
+![Yuuki](snow_yuuki.jpg)  
   
 ## Table of Contents  
 
