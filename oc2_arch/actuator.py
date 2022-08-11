@@ -7,6 +7,11 @@ from .openc2_types import OpenC2CmdFields, OpenC2RspFields
 OpenC2Function = Callable[[OpenC2CmdFields], OpenC2RspFields]
 
 
+def unimplemented_command(action: str, target: str) -> str:
+    error_message = "Unimplemented Command "+action+" "+target
+    return error_message
+
+
 class Actuator:
     dispatch: Dict[str, Dict[str, Dict[str, Callable]]]
     pairs: Dict[str, List[str]]
@@ -62,7 +67,6 @@ class Actuator:
             print("Added " + action + " " + target)
         else:
             self.understood.setdefault(action, []).append(target)
-            print("Unimplemented Command"+action+" "+target)
+            print(unimplemented_command(action, target))
             pass
-
 

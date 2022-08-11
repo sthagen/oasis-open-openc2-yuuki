@@ -29,6 +29,10 @@ def on_message(client, userdata, msg):
 
 
 mqtt_client = mqtt.Client(protocol=mqtt.MQTTv5)
+mqtt_client.username_pw_set(
+    username='USER',
+    password='PASSWORD'
+)
 mqtt_client.on_message = on_message
 mqtt_client.connect(host=host, port=port, keepalive=60, clean_start=False)
 mqtt_client.subscribe(topic="oc2/rsp",
