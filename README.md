@@ -29,13 +29,16 @@ Yuuki is a tool for creating OpenC2 Consumers.
 Open Command and Control, or OpenC2, is a standardized language for the command and control of technologies that provide or support cyber defenses.
 OpenC2 Commands are sent by Producer devices to Consumers that receive and implement Commands.  
 OpenC2 is defined in the [OpenC2 Architecture Specification](https://docs.oasis-open.org/openc2/oc2arch/v1.0/csd02/oc2arch-v1.0-csd02.md) and [OpenC2 Language Specification](https://github.com/oasis-tcs/openc2-oc2ls/blob/published/oc2ls-v1.0-cs02.md)
-Yuuki serves a few purposes:
 
-* Provide an introduction to OpenC2
-* Facilitate experimentation with different Actuator profiles, transfer protocols and message serializations
-* Provide an OpenC2 Consumer for OpenC2 Producers to test against
+#### Statement of Purpose
+Statement of Purpose for this OASIS TC Open Repository (openc2-yuuki) as [proposed](https://drive.google.com/open?id=0B-FunCZrr-vtcUJTWVBNaFNlVUE) and [approved](https://www.oasis-open.org/committees/ballot.php?id=3115) [[bis]](https://issues.oasis-open.org/browse/TCADMIN-2746) by the OpenC2 TC:  
+The purpose of the openc2-yuuki GitHub repository is to   
+    (a) demonstrate the implementation of OpenC2 via multiple dispatch on type, and    
+    (b) provision a codebase to enable other prototype efforts.    
+The initial codebase for the openc2-yuuki repository is imported from the OpenC2 Forum's Github repository.  
 
-
+Yuuki is designed to be a good introduction to OpenC2, to facilitate experimentation with different Actuator profiles,  
+transfer protocols and message serializations, and to provide a simple OpenC2 Consumer for OpenC2 Producers to test against.  
 The three main components of Yuuki are the [Consumer](consumers), [Actuator](#actuators), and [Serialization](#serializations) classes, 
 defined respectively in the `consumer.py`, `actuator.py`, and `serialization.py` files.
 
@@ -313,19 +316,12 @@ Current Maintainers of this TC Open Repository
 * [David Lemire](mailto:david.lemire@hii-tsd.com); GitHub ID: [https://github.com/dlemire60](https://github.com/dlemire60); WWW: [National Security Agency](www.nsa.gov)
 * The ScreamingBunny Development team; GitHub ID: [https://github.com/ScreamBun](https://github.com/ScreamBun)
 
-#### Statement of Purpose
-Statement of Purpose for this OASIS TC Open Repository (openc2-yuuki) as [proposed](https://drive.google.com/open?id=0B-FunCZrr-vtcUJTWVBNaFNlVUE) and [approved](https://www.oasis-open.org/committees/ballot.php?id=3115) [[bis]](https://issues.oasis-open.org/browse/TCADMIN-2746) by the OpenC2 TC:  
-The purpose of the openc2-yuuki GitHub repository is to   
-    (a) demonstrate the implementation of OpenC2 via multiple dispatch on type, and    
-    (b) provision a codebase to enable other prototype efforts.    
-The initial codebase for the openc2-yuuki repository is imported from the OpenC2 Forum's Github repository.  
-
-#### About OASIS TC Open Repositories
+#### Where can I learn about OASIS TC Open Repositories?
 * [TC Open Repositories: Overview and Resources](https://www.oasis-open.org/resources/open-repositories/)
 * [Frequently Asked Questions](https://www.oasis-open.org/resources/open-repositories/faq)
 * [Open Source Licenses](https://www.oasis-open.org/resources/open-repositories/licenses)
 * [Contributor License Agreements (CLAs)](https://www.oasis-open.org/resources/open-repositories/cla)
 * [Maintainers' Guidelines and Agreement](https://www.oasis-open.org/resources/open-repositories/maintainers-guide)
 
-#### Submitting Feedback to this Repository
+#### How do I submit Feedback to this Repository?
 Questions or comments about this TC Open Repository's activities should be composed as GitHub issues or comments. If use of an issue/comment is not possible or appropriate, questions may be directed by email to the Maintainer(s) [listed above](https://ccoe-gitlab.hii-tsd.com/screamingbunny/yuuki/-/blob/34630146e94b73b0604bdeea80b74339607e08e3/README.md#currentMaintainers).  Please send general questions about TC Open Repository participation to OASIS Staff at [repository-admin@oasis-open.org](mailto:repository-admin@oasis-open.org) and any specific CLA-related questions to [repository-cla@oasis-open.org](mailto:repository-cla@oasis-open.org).
