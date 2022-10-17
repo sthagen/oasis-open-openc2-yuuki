@@ -24,7 +24,7 @@
 Yuuki is a tool for creating OpenC2 Consumers.
 Open Command and Control, or OpenC2, is a standardized language for the command and control of technologies that provide or support cyber defenses.
 OpenC2 Commands are sent by Producer devices to Consumers that receive and implement Commands.  
-OpenC2 is defined in the [OpenC2 Architecture Specification](https://docs.oasis-open.org/openc2/oc2arch/v1.0/csd02/oc2arch-v1.0-csd02.md) and [OpenC2 Language Specification](https://github.com/oasis-tcs/openc2-oc2ls/blob/published/oc2ls-v1.0-cs02.md)
+OpenC2 is defined in the [OpenC2 Architecture Specification](https://docs.oasis-open.org/openc2/oc2arch/v1.0/csd02/oc2arch-v1.0-csd02.md) and [OpenC2 Language Specification](https://github.com/oasis-tcs/openc2-oc2ls/blob/published/oc2ls-v1.0-cs02.md).
 
 ### Background
 
@@ -44,8 +44,7 @@ The purpose of the openc2-yuuki GitHub repository is to
     (b) provision a codebase to enable other prototype efforts.    
 The initial codebase for the openc2-yuuki repository is imported from the OpenC2 Forum's Github repository.  
 
-Yuuki is designed to be a good introduction to OpenC2, to facilitate experimentation with different Actuator profiles,  
-transfer protocols and message serializations, and to provide a simple OpenC2 Consumer for OpenC2 Producers to test against.  
+Yuuki is designed to be a good introduction to OpenC2, to facilitate experimentation with different Actuator profiles, transfer protocols, and message serializations, and to provide a simple OpenC2 Consumer for OpenC2 Producers to test against.  
 
 The three main components of Yuuki are the [Consumer](consumers), [Actuator](#actuators), and [Serialization](#serializations) classes, 
 defined respectively in the `consumer.py`, `actuator.py`, and `serialization.py` files.
@@ -134,7 +133,7 @@ An Actuator is identified by a string representing the namespace identifier (`ns
 Actuators consist of a number of action- target pairs, and inherit from the Actuator class, 
 giving them access to initialization, pair definition and registration, and some basic error handling.
 
-For example, see the sample implementation of an Actuator based on the [Stateless Packet Filtering](https://docs.oasis-open.org/openc2/oc2slpf/v1.0/oc2slpf-v1.0.html) Actuator profile in `examples/actuators/slpf.py`
+For example, see the sample implementation of an Actuator based on the [Stateless Packet Filtering](https://docs.oasis-open.org/openc2/oc2slpf/v1.0/oc2slpf-v1.0.html) Actuator profile in `examples/actuators/slpf.py`.
 [Stateless Packet Filtering](https://docs.oasis-open.org/openc2/oc2slpf/v1.0/oc2slpf-v1.0.html) is a standard Actuator profile with the nsid: `slpf`.
 nsids of nonstandard Actuator profiles are prefixed with `x-`.
 
@@ -244,8 +243,7 @@ Yuuki's Consumer functions require it has OpenC2 to read. Transport functions ar
 These are found under `/openc2_arch/transports` and have `__init__,` `config` and `transport` functions.  
 These were not listed with the other core parts of Yuuki only because they interact with its Consumer logic very little.  
 They are very important, but they deal with transporting serialized messages, not OpenC2 Commands.  
-This is where your connection info is sent to properly establish connections.  
-Tinker with caution!  
+This is where your connection info is sent to properly establish connections, so tinker with caution!  
 
 ### MQTT
 You can find the OpenC2 MQTT Transfer Specification [Here](https://github.com/oasis-tcs/openc2-transf-mqtt/blob/published/transf-mqtt-v1.0-cs01.md).
