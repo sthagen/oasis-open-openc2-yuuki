@@ -1,44 +1,51 @@
 
-## OASIS TC Open Repository: openc2-yuuki
-
-This GitHub public repository ( [https://github.com/oasis-open/openc2-yuuki](https://github.com/oasis-open/openc2-yuuki) ) was created at the request of the [OASIS Open Command and Control (OpenC2) TC](https://www.oasis-open.org/committees/openc2/) as an [OASIS TC Open Repository](https://www.oasis-open.org/resources/open-repositories/) to support development of open source resources related to Technical Committee work.
-While this TC Open Repository remains associated with the sponsor TC, its development priorities, leadership, intellectual property terms, participation rules, and other matters of governance are [separate and distinct](https://github.com/oasis-open/openc2-yuuki/blob/master/CONTRIBUTING.md#governance-distinct-from-oasis-tc-process) from the OASIS TC Process and related policies.
-All contributions made to this TC Open Repository are subject to open source license terms expressed in the [BSD-3-Clause License](https://www.oasis-open.org/sites/www.oasis-open.org/files/BSD-3-Clause.txt).  That license was selected as the declared ["Applicable License"](https://www.oasis-open.org/resources/open-repositories/licenses) when the TC Open Repository was created.
-As documented in ["Public Participation Invited"](https://github.com/oasis-open/openc2-yuuki/blob/master/CONTRIBUTING.md#public-participation-invited), contributions to this OASIS TC Open Repository are invited from all parties, whether affiliated with OASIS or not.  Participants must have a GitHub account, but no fees or OASIS membership obligations are required. Participation is expected to be consistent with the [OASIS TC Open Repository Guidelines and Procedures](https://www.oasis-open.org/policies-guidelines/open-repositories), the open source [LICENSE](https://github.com/oasis-open/openc2-yuuki/blob/master/LICENSE) designated for this particular repository, and the requirement for an [Individual Contributor License Agreement](https://www.oasis-open.org/resources/open-repositories/cla/individual-cla) that governs intellectual property.
-  
 [<img src="snow_yuuki.jpg" alt="Yuuki" title="Yuuki Image" width="224" height="104"/>](snow_yuuki.jpg)
-  
+
+[![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-yellow)](https://www.python.org/downloads/release/python-3100/) 
+[![Open2C Lang Spec](https://img.shields.io/badge/Open2C%20Lang%20Spec-1.0-brightgreen)](https://github.com/dlemire60/openc2-oc2ls/releases/tag/v1.0-cs01)
+
 ## Table of Contents  
   
-[Introduction](#introduction)  
-[Requirements and Setup](#requirements-and-setup)  
-[Yuuki's Consumer Components](#components-of-a-yuuki-consumer)  
-    * [Consumers](#consumers)  
-    * [Actuators](#actuators)  
-    * [Serializations](#serializations)  
-[Example Consumers](#examples)  
-[Transport Functions](#transport-functions)  
-    * [HTTP](#HTTP)  
-    * [MQTT](#MQTT)  
-    * [OpenDXL(experimental)](#opendxl)  
-[FAQ](#frequently-asked-questions)
+- [Introduction](#introduction)  
+- [Requirements and Setup](#requirements-and-setup)  
+- [Yuuki's Consumer Components](#components-of-a-yuuki-consumer)  
+  - [Consumers](#consumers)  
+  - [Actuators](#actuators)  
+  - [Serializations](#serializations)  
+- [Example Consumers](#examples)  
+- [Transport Functions](#transport-functions)  
+  - [HTTP](#HTTP)  
+  - [MQTT](#MQTT)  
+  - [OpenDXL(experimental)](#opendxl)  
+- [FAQ](#frequently-asked-questions)
     
 
 ## Introduction
 Yuuki is a tool for creating OpenC2 Consumers.
 Open Command and Control, or OpenC2, is a standardized language for the command and control of technologies that provide or support cyber defenses.
 OpenC2 Commands are sent by Producer devices to Consumers that receive and implement Commands.  
-OpenC2 is defined in the [OpenC2 Architecture Specification](https://docs.oasis-open.org/openc2/oc2arch/v1.0/csd02/oc2arch-v1.0-csd02.md) and [OpenC2 Language Specification](https://github.com/oasis-tcs/openc2-oc2ls/blob/published/oc2ls-v1.0-cs02.md)
+OpenC2 is defined in the [OpenC2 Architecture Specification](https://docs.oasis-open.org/openc2/oc2arch/v1.0/csd02/oc2arch-v1.0-csd02.md) and [OpenC2 Language Specification](https://github.com/oasis-tcs/openc2-oc2ls/blob/published/oc2ls-v1.0-cs02.md).
 
-#### Statement of Purpose
+### Background
+
+This GitHub public repository ( [https://github.com/oasis-open/openc2-yuuki](https://github.com/oasis-open/openc2-yuuki) ) was created at the request of the [OASIS Open Command and Control (OpenC2) TC](https://www.oasis-open.org/committees/openc2/) as an [OASIS TC Open Repository](https://www.oasis-open.org/resources/open-repositories/) to support development of open source resources related to Technical Committee work.
+
+While this TC Open Repository remains associated with the sponsor TC, its development priorities, leadership, intellectual property terms, participation rules, and other matters of governance are [separate and distinct](https://github.com/oasis-open/openc2-yuuki/blob/master/CONTRIBUTING.md#governance-distinct-from-oasis-tc-process) from the OASIS TC Process and related policies.
+
+All contributions made to this TC Open Repository are subject to open source license terms expressed in the [BSD-3-Clause License](https://www.oasis-open.org/sites/www.oasis-open.org/files/BSD-3-Clause.txt).  That license was selected as the declared ["Applicable License"](https://www.oasis-open.org/resources/open-repositories/licenses) when the TC Open Repository was created.
+
+As documented in ["Public Participation Invited"](https://github.com/oasis-open/openc2-yuuki/blob/master/CONTRIBUTING.md#public-participation-invited), contributions to this OASIS TC Open Repository are invited from all parties, whether affiliated with OASIS or not.  Participants must have a GitHub account, but no fees or OASIS membership obligations are required. Participation is expected to be consistent with the [OASIS TC Open Repository Guidelines and Procedures](https://www.oasis-open.org/policies-guidelines/open-repositories), the open source [LICENSE](https://github.com/oasis-open/openc2-yuuki/blob/master/LICENSE) designated for this particular repository, and the requirement for an [Individual Contributor License Agreement](https://www.oasis-open.org/resources/open-repositories/cla/individual-cla) that governs intellectual property.
+  
+
+### Statement of Purpose
 Statement of Purpose for this OASIS TC Open Repository (openc2-yuuki) as [proposed](https://drive.google.com/open?id=0B-FunCZrr-vtcUJTWVBNaFNlVUE) and [approved](https://www.oasis-open.org/committees/ballot.php?id=3115) [[bis]](https://issues.oasis-open.org/browse/TCADMIN-2746) by the OpenC2 TC:  
 The purpose of the openc2-yuuki GitHub repository is to   
     (a) demonstrate the implementation of OpenC2 via multiple dispatch on type, and    
     (b) provision a codebase to enable other prototype efforts.    
 The initial codebase for the openc2-yuuki repository is imported from the OpenC2 Forum's Github repository.  
 
-Yuuki is designed to be a good introduction to OpenC2, to facilitate experimentation with different Actuator profiles,  
-transfer protocols and message serializations, and to provide a simple OpenC2 Consumer for OpenC2 Producers to test against.  
+Yuuki is designed to be a good introduction to OpenC2, to facilitate experimentation with different Actuator profiles, transfer protocols, and message serializations, and to provide a simple OpenC2 Consumer for OpenC2 Producers to test against.  
+
 The three main components of Yuuki are the [Consumer](consumers), [Actuator](#actuators), and [Serialization](#serializations) classes, 
 defined respectively in the `consumer.py`, `actuator.py`, and `serialization.py` files.
 
@@ -126,7 +133,7 @@ An Actuator is identified by a string representing the namespace identifier (`ns
 Actuators consist of a number of action- target pairs, and inherit from the Actuator class, 
 giving them access to initialization, pair definition and registration, and some basic error handling.
 
-For example, see the sample implementation of an Actuator based on the [Stateless Packet Filtering](https://docs.oasis-open.org/openc2/oc2slpf/v1.0/oc2slpf-v1.0.html) Actuator profile in `examples/actuators/slpf.py`
+For example, see the sample implementation of an Actuator based on the [Stateless Packet Filtering](https://docs.oasis-open.org/openc2/oc2slpf/v1.0/oc2slpf-v1.0.html) Actuator profile in `examples/actuators/slpf.py`.
 [Stateless Packet Filtering](https://docs.oasis-open.org/openc2/oc2slpf/v1.0/oc2slpf-v1.0.html) is a standard Actuator profile with the nsid: `slpf`.
 nsids of nonstandard Actuator profiles are prefixed with `x-`.
 
@@ -236,8 +243,7 @@ Yuuki's Consumer functions require it has OpenC2 to read. Transport functions ar
 These are found under `/openc2_arch/transports` and have `__init__,` `config` and `transport` functions.  
 These were not listed with the other core parts of Yuuki only because they interact with its Consumer logic very little.  
 They are very important, but they deal with transporting serialized messages, not OpenC2 Commands.  
-This is where your connection info is sent to properly establish connections.  
-Tinker with caution!  
+This is where your connection info is sent to properly establish connections, so tinker with caution!  
 
 ### MQTT
 You can find the OpenC2 MQTT Transfer Specification [Here](https://github.com/oasis-tcs/openc2-transf-mqtt/blob/published/transf-mqtt-v1.0-cs01.md).

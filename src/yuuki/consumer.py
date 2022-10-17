@@ -53,7 +53,7 @@ class Consumer:
                 self.add_serialization(serialization)
         if actuators is not None:
             for actuator in actuators:
-                self.add_actuator_profile(actuator)
+                self.add_actuator(actuator)
                 print("Added actuator "+actuator.nsid)
         self.executor = ThreadPoolExecutor()
         print(r'''
@@ -255,7 +255,7 @@ class Consumer:
         print("Command Not Implemented")
         return OpenC2RspFields(status=StatusCode.NOT_IMPLEMENTED, status_text='Command Not Supported')
 
-    def add_actuator_profile(self, actuator: Actuator) -> None:
+    def add_actuator(self, actuator: Actuator) -> None:
         """
         Adds the Actuator's functions to the Consumer and adds the Actuator's namespace identifier (nsid) to the
         list of supported profiles
