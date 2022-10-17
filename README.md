@@ -1,23 +1,23 @@
 
 [<img src="snow_yuuki.jpg" alt="Yuuki" title="Yuuki Image" width="224" height="104"/>](snow_yuuki.jpg)
 
-[![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-yellow)](https://www.python.org/downloads/release/python-3100/)  
+[![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-yellow)](https://www.python.org/downloads/release/python-3100/) 
 [![Open2C Lang Spec](https://img.shields.io/badge/Open2C%20Lang%20Spec-1.0-brightgreen)](https://github.com/dlemire60/openc2-oc2ls/releases/tag/v1.0-cs01)
 
 ## Table of Contents  
   
-[Introduction](#introduction)  
-[Requirements and Setup](#requirements-and-setup)  
-[Yuuki's Consumer Components](#components-of-a-yuuki-consumer)  
-    * [Consumers](#consumers)  
-    * [Actuators](#actuators)  
-    * [Serializations](#serializations)  
-[Example Consumers](#examples)  
-[Transport Functions](#transport-functions)  
-    * [HTTP](#HTTP)  
-    * [MQTT](#MQTT)  
-    * [OpenDXL(experimental)](#opendxl)  
-[FAQ](#frequently-asked-questions)
+- [Introduction](#introduction)  
+- [Requirements and Setup](#requirements-and-setup)  
+- [Yuuki's Consumer Components](#components-of-a-yuuki-consumer)  
+  - [Consumers](#consumers)  
+  - [Actuators](#actuators)  
+  - [Serializations](#serializations)  
+- [Example Consumers](#examples)  
+- [Transport Functions](#transport-functions)  
+  - [HTTP](#HTTP)  
+  - [MQTT](#MQTT)  
+  - [OpenDXL(experimental)](#opendxl)  
+- [FAQ](#frequently-asked-questions)
     
 
 ## Introduction
@@ -26,7 +26,7 @@ Open Command and Control, or OpenC2, is a standardized language for the command 
 OpenC2 Commands are sent by Producer devices to Consumers that receive and implement Commands.  
 OpenC2 is defined in the [OpenC2 Architecture Specification](https://docs.oasis-open.org/openc2/oc2arch/v1.0/csd02/oc2arch-v1.0-csd02.md) and [OpenC2 Language Specification](https://github.com/oasis-tcs/openc2-oc2ls/blob/published/oc2ls-v1.0-cs02.md)
 
-#### Background
+### Background
 
 This GitHub public repository ( [https://github.com/oasis-open/openc2-yuuki](https://github.com/oasis-open/openc2-yuuki) ) was created at the request of the [OASIS Open Command and Control (OpenC2) TC](https://www.oasis-open.org/committees/openc2/) as an [OASIS TC Open Repository](https://www.oasis-open.org/resources/open-repositories/) to support development of open source resources related to Technical Committee work.
 
@@ -37,7 +37,7 @@ All contributions made to this TC Open Repository are subject to open source lic
 As documented in ["Public Participation Invited"](https://github.com/oasis-open/openc2-yuuki/blob/master/CONTRIBUTING.md#public-participation-invited), contributions to this OASIS TC Open Repository are invited from all parties, whether affiliated with OASIS or not.  Participants must have a GitHub account, but no fees or OASIS membership obligations are required. Participation is expected to be consistent with the [OASIS TC Open Repository Guidelines and Procedures](https://www.oasis-open.org/policies-guidelines/open-repositories), the open source [LICENSE](https://github.com/oasis-open/openc2-yuuki/blob/master/LICENSE) designated for this particular repository, and the requirement for an [Individual Contributor License Agreement](https://www.oasis-open.org/resources/open-repositories/cla/individual-cla) that governs intellectual property.
   
 
-#### Statement of Purpose
+### Statement of Purpose
 Statement of Purpose for this OASIS TC Open Repository (openc2-yuuki) as [proposed](https://drive.google.com/open?id=0B-FunCZrr-vtcUJTWVBNaFNlVUE) and [approved](https://www.oasis-open.org/committees/ballot.php?id=3115) [[bis]](https://issues.oasis-open.org/browse/TCADMIN-2746) by the OpenC2 TC:  
 The purpose of the openc2-yuuki GitHub repository is to   
     (a) demonstrate the implementation of OpenC2 via multiple dispatch on type, and    
