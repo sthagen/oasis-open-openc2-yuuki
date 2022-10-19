@@ -2,7 +2,7 @@
 [<img src="snow_yuuki.jpg" alt="Yuuki" title="Yuuki Image" width="224" height="104"/>](snow_yuuki.jpg)
 
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-yellow)](https://www.python.org/downloads/release/python-3100/) 
-[![Open2C Lang Spec](https://img.shields.io/badge/Open2C%20Lang%20Spec-1.0-brightgreen)](https://github.com/dlemire60/openc2-oc2ls/releases/tag/v1.0-cs01)
+[![Open2C Lang Spec](https://img.shields.io/badge/Open2C%20Lang%20Spec-1.0-brightgreen)](https://github.com/oasis-tcs/openc2-oc2ls/blob/published/oc2ls-v1.0-cs02.md)
 
 ## Table of Contents  
   
