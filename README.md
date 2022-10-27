@@ -1,8 +1,8 @@
 
-[<img src="snow_yuuki.jpg" alt="Yuuki" title="Yuuki Image" width="224" height="104"/>](snow_yuuki.jpg)
+<a href="https://openc2.org/" target="_blank">![OpenC2](https://github.com/ScreamBun/SB_Utils/blob/master/assets/images/openc2.png?raw=true)</a>
 
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-yellow)](https://www.python.org/downloads/release/python-3100/) 
-[![Open2C Lang Spec](https://img.shields.io/badge/Open2C%20Lang%20Spec-1.0-brightgreen)](https://github.com/oasis-tcs/openc2-oc2ls/blob/published/oc2ls-v1.0-cs02.md)
+[![Open2C Lang Spec](https://img.shields.io/badge/Open2C%20Lang%20Spec-1.0-brightgreen)](https://openc2.org/specifications)
 
 ## Table of Contents  
   
@@ -15,8 +15,7 @@
 - [Example Consumers](#examples)  
 - [Transport Functions](#transport-functions)  
   - [HTTP](#HTTP)  
-  - [MQTT](#MQTT)  
-  - [OpenDXL(experimental)](#opendxl)  
+  - [MQTT](#MQTT)   
 - [FAQ](#frequently-asked-questions)
     
 
@@ -272,15 +271,6 @@ python examples/http_example.py
 python examples/producers/http_producer.py
 ```
 
-### OpenDXL
-
-| :warning:        | *Support for OpenDXL is experimental*|
-|------------------|:-------------------------------------|
-
-This example uses both the Event and Request/Response messaging capabilities of OpenDXL to send and receive OpenC2 Messages.
-
-An OpenDXL configuration file is required to run these examples.
-
 #### Start Consumer:
 ```sh
 python examples/opendxl_example.py PATH_TO_OPENDXL_CONFIG
@@ -316,10 +306,8 @@ Good Luck, and Have Fun!
 TC Open Repository [Maintainers](https://www.oasis-open.org/resources/open-repositories/maintainers-guide) are responsible for oversight of this project's community development activities, including evaluation of GitHub [pull requests]() and [preserving](https://www.oasis-open.org/policies-guidelines/open-repositories#repositoryManagement) open source principles of openness and fairness. Maintainers are recognized and trusted experts who serve to implement community goals and consensus design preferences.
 Initially, the associated TC members have designated one or more persons to serve as Maintainer(s); subsequently, participating community members may select additional or substitute Maintainers, per [consensus agreements](https://www.oasis-open.org/maintainers-guide/#additionalMaintainers).
 Current Maintainers of this TC Open Repository  
-  
-* [Dave Kemp](dpkemp@radium.ncsc.mil); GitHub ID: [https://github.com/davaya](https://github.com/davaya); WWW: [Department of Defense](www.nsa.gov)  
-* [Joshua Brulé](mailto:jctbrule@gmail.com); GitHub ID: [https://github.com/jtcbrule](https://github.com/jtcbrule); WWW: [University of Maryland](https://umd.edu/)
-* [David Lemire](mailto:david.lemire@hii-tsd.com); GitHub ID: [https://github.com/dlemire60](https://github.com/dlemire60); WWW: [National Security Agency](www.nsa.gov)
+
+* [David Lemire](mailto:david.lemire@hii-tsd.com); Email: david.lemire@hii-tsd.com 
 * The ScreamingBunny Development team; GitHub ID: [https://github.com/ScreamBun](https://github.com/ScreamBun)
 
 #### Where can I learn about OASIS TC Open Repositories?

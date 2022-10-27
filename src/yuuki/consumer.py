@@ -4,7 +4,7 @@ https://docs.oasis-open.org/openc2/oc2ls/v1.0/oc2ls-v1.0.html#54-conformance-cla
 import json
 import logging
 from time import time
-from pprint import pformat  # properly prints JSON serielized text as part of return messages, useful for SBOM etc
+from pprint import pformat  # properly prints JSON serialized text as part of return messages, useful for SBOM etc
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from typing import Any, Callable, Dict, List, Union
@@ -88,6 +88,11 @@ class Consumer:
 
         try:
             openc2_msg = OpenC2Msg(**message)
+
+
+            print(openc2_msg)
+
+
         except ValidationError as e:
             #logging.error(e)
             openc2_rsp = OpenC2RspFields(status=StatusCode.BAD_REQUEST, status_text='Malformed OpenC2 message')
@@ -181,21 +186,21 @@ class Consumer:
         :return: The function with the received OpenC2 Command supplied as an argument.
         """
         oc2_cmd = oc2_msg.body.openc2.request
-        print(f"{oc2_cmd.action} {oc2_cmd.target_name} {oc2_cmd.actuator_name}")
+        print(f"{oc2_cmd.action} {oc2_cmd.target_name} {oc2_cmd.profile_name}")
         print(self.dispatch)
         print(self.understood)
         if oc2_cmd.action == 'query' and oc2_cmd.target_name == 'features':
             function = self.query_features
         elif oc2_cmd.action in self.dispatch and oc2_cmd.target_name in self.dispatch[oc2_cmd.action]:
-            if oc2_cmd.actuator_name is None:
+            if oc2_cmd.profile_name is None:
                 # Behavior of duplicate Action-Target pairs is currently undefined in the OpenC2 language.
                 # For the time being, this is handled by calling the function of the first matching pair.
                 function = next(iter(self.dispatch[oc2_cmd.action][oc2_cmd.target_name].values()))
             else:
-                if oc2_cmd.actuator_name in self.dispatch[oc2_cmd.action][oc2_cmd.target_name]:
-                    function = self.dispatch[oc2_cmd.action][oc2_cmd.target_name][oc2_cmd.actuator_name]
+                if oc2_cmd.profile_name in self.dispatch[oc2_cmd.action][oc2_cmd.target_name]:
+                    function = self.dispatch[oc2_cmd.action][oc2_cmd.target_name][oc2_cmd.profile_name]
                 else:
-                    raise TypeError(f'No Actuator: {oc2_cmd.actuator_name}')
+                    raise TypeError(f'No Actuator: {oc2_cmd.profile_name}')
         elif oc2_cmd.action in self.understood and oc2_cmd.target_name in self.understood[oc2_cmd.action]:
             function = self.unimplemented_command_function
         else:
