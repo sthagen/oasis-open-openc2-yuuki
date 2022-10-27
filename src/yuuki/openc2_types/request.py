@@ -49,8 +49,9 @@ class OpenC2CmdFields(BaseModel, extra=Extra.forbid):
     profile: Optional[Dict[str, Dict[str, Any]]]
     command_id: Optional[str]
 
-    @validator('target', 'actuator')
+    @validator('target', 'profile')
     def validate_choice_length(cls, choice: Dict):
+
         if len(choice) != 1:
             raise ValueError('Choice fields must have a length of one')
         return choice

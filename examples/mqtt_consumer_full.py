@@ -11,12 +11,11 @@ from yuuki import Consumer
 
 from actuators.slpf import slpf
 
-
 consumer = Consumer(rate_limit=60, versions=['1.0'], actuators=[slpf])
 
-host = "127.0.0.1"
+host = "test.mosquitto.org"
 port = 1883
-topics = ['oc2/cmd', 'oc2/cmd/ap/slpf', 'oc2/cmd/ap/database', 'oc2/cmd/ap/sbom']
+topics = ['oc2/cmd', 'oc2/cmd/ap/slpf']
 
 mqtt_config = MqttConfig(
     broker=BrokerConfig(
@@ -25,7 +24,7 @@ mqtt_config = MqttConfig(
         client_id='',
         keep_alive=300,
         authorization=MQTTAuthorization(
-            enable=True,
+            enable=False,
             username='plug',
             password='fest'
         ),
