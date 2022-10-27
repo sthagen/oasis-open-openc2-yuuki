@@ -16,7 +16,7 @@ class MQTTAuthentication(BaseSettings):
 
 
 class BrokerConfig(BaseSettings):
-    host: str = '127.0.0.1'
+    host: str = 'test.mosquitto.org'
     port: int = 1883
     client_id: str = ''
     keep_alive: int = 300
@@ -63,7 +63,7 @@ class MqttConfig(BaseSettings):
     publications: list of topic/qos objects for Responses
     """
     broker: BrokerConfig = BrokerConfig()
-    setattr(broker, 'host', '35.221.11.97')
+    setattr(broker, 'host', 'mosquitto.olympus.mtn')
     subscriptions: List[Subscription] = [Subscription()]
     publications: List[Publication] = [Publication()]
 

@@ -1,4 +1,5 @@
 SB-Utils@git+https://github.com/ScreamBun/SB_utils.git#subdirectory=root
+OSQuery-ORM@git+https://github.com/ScreamBun/SB_utils.git#subdirectory=osquery_orm
 dxlclient
 elasticsearch
 flask

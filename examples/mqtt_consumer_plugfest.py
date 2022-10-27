@@ -1,23 +1,23 @@
 """
 Example Implementation of an OpenC2 MQTT Consumer
 """
-from yuuki.transports import (
+from oc2_arch.transports import (
     MqttTransport, MqttConfig, MQTTAuthorization, MQTTAuthentication, BrokerConfig, Publication, Subscription
 )
 
-from yuuki import Consumer
+from oc2_arch import Consumer
 # import actuator profiles for your consumer
 
-
-from actuators.er import er
+from actuators.database import database
+from actuators.sbom import sbom
 from actuators.slpf import slpf
 
 
-consumer = Consumer(rate_limit=60, versions=['1.0'], actuators=[er, slpf])
+consumer = Consumer(rate_limit=60, versions=['1.0'], actuators=[sbom, database, slpf])
 
-host = "127.0.0.1"
+host = '35.221.11.97'
 port = 1883
-topics = ['oc2/cmd', 'oc2/cmd/ap/er']
+topics = ['oc2/cmd', 'oc2/cmd/ap/slpf', 'oc2/cmd/ap/database', 'oc2/cmd/ap/sbom']
 
 mqtt_config = MqttConfig(
     broker=BrokerConfig(

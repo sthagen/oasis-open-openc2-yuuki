@@ -10,6 +10,8 @@ def get_requirements():
 
 setup(
     name='Yuuki',
-
+    package_data={
+        "yuuki": ["./src/yuuki/*"]
+    },
     install_requires=get_requirements()
 )
